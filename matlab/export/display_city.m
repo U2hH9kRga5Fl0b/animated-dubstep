@@ -2,20 +2,20 @@
 function display_city(c)
 % TODO: this function shouldn't depend on the order the city was made!!!
 
-sizes = 3 * ones(m, 1);
-colors = ones(m, 1);
+sizes = 3 * ones(c.m, 1);
+colors = ones(c.m, 1);
 
-for i=1:Y
+for i=1:c.Y
     colors(i, 1) = 4;
 end
-for i=(1+Y):(D + Y)
+for i=(1+c.Y):(c.D + c.Y)
     colors(i, 1) = 7;
 end
 
 %need starts, roads, wait times, sizes, number of trucks
 scatter(c.locs(:, 1), c.locs(:, 2), sizes, colors);
 
-for i = 1:Y
+for i = 1:c.Y
     %List the yards
     loc = c.locs(c.yards(i).location);
     if (i > 1)
@@ -39,18 +39,18 @@ for i = 1:Y
         'HorizontalAlignment', 'left', 'VerticalAlignment', 'top',...
         'Color', 'green');
 end
-for i = (Y+1):(Y+D)
+for i = (c.Y+1):(c.Y+c.D)
     %List the dumps
     loc = c.locs(i);
     text(loc(1, 1), loc(1, 2), 0, ' DUMP', ...
         'VerticalAlignment', 'top', 'Color', 'red');
     text(loc(1, 1), loc(1, 2), 0, strcat(' (Stop #', ...
-        int2str(i - Y), ') '), 'VerticalAlignment', 'bottom', ...
+        int2str(i - c.Y), ') '), 'VerticalAlignment', 'bottom', ...
         'Color', 'red');
 end
-for i = (Y+D+1):(Y+D+R)
+for i = (8 * c.Y + 4 * c.D + 1):c.m
     %List all of the customer requests
-    loc = c.locs(i);
+    loc = c.locs(c.actions(i));
     text(loc(1,1), loc(1,2), strcat(' ', c.actions(i).operation));
     text(loc(1, 1), loc(1, 2), ...
         strcat(' (Stop #', int2str(i - (Y + D)), ') '), ...
