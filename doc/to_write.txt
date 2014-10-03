@@ -1,0 +1,63 @@
+
+generate random city
+translate
+
+
+generate random solution
+	make sure it is feasible
+
+
+simulate
+	null solution
+	random solution
+	0 requests serviced but allot of traffic between staging areas
+	specific number of requests serviced
+	0 serviced with several landfills
+	0 landfills?
+	0 yards
+	
+	have incorrect size
+	have incorrect time
+
+	have negative inventory
+	have inventory over capacity
+	have inventory over capacity in initial inventory (whether this belongs as a test to the simulate function or not, we should have it as a test.)
+
+	repeated stop in same route
+	repeated stop in different route
+	repeated stop but it is only a staging area
+	repeated stop but it is only a land fill
+
+
+
+
+
+
+
+
+functions to write:
+correct arguments (matrix sizes)
+
+helper:
+	matrix of times when each stop is serviced
+
+constraints (return boolean):
+	make sure no request is serviced twice
+	verify that the operations follow each other
+	verify that the sizes match from stop to stop (bigger can serve smaller!!!)
+	count the inventory at each stop and make sure that it is within capacity and non-negative (somewhat harder to code than most other functions)
+	function to return whether a truck ends where it starts (maybe won't be used)
+	all action/truck type/operation constraints met
+
+other:
+	count the difference between the time that a truck is supposed to be at a stop and the time it actually is.
+
+
+objectives:
+	get total time for each driver
+	count the number of requests that have been serviced
+	get the total distance driven
+	get the total number of fees
+
+
+
