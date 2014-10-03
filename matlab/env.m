@@ -8,6 +8,3 @@ addpath('.\objects');
 addpath('.\src');
 addpath('.\test');
 
-
-generate(10,4,3, 3);
-

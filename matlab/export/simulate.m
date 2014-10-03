@@ -1,22 +1,6 @@
-function [feasible, times, num_serviced] = simulate(solution, c)
+function [feasible, times, num_serviced] = simulate(c. sol)
 
-if ~ isa(c, 'city')
-    disp('The second argument must be a city!!');
-    
-    feasible = false;
-    times = [];
-    num_serviced = 0;
-    return
-end
-
-if ~ isequal(size(solution), [ c.D, c.n])
-    disp('Your solution is of the wrong dimension!!');
-    
-    feasible = false;
-    times = [];
-    num_serviced = 0;
-    return
-end
+satisfies_argument_types(c, solution)
 
 feasible = false; % you still fail though, mwah ha ha ha
 num_serviced = 0; % ... hard

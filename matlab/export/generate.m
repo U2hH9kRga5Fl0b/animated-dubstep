@@ -9,11 +9,11 @@ function [c] = generate(R, L, Y, D)
 n = R + 8 * Y + 4 * L;
 m = R + Y + L;
 
-n = cast(n, 'uint32');
-m = cast(m, 'uint32');
-Y = cast(Y, 'uint32');
-L = cast(L, 'uint32');
-D = cast(D, 'uint32');
+%n = cast(n, 'uint32');
+%m = cast(m, 'uint32');
+%n = cast(Y, 'uint32');
+%L = cast(L, 'uint32');
+%D = cast(D, 'uint32');
 
 % This is the number of seconds in a 12 hour day;
 %we may want to change this, but I'm just using it as a placeholder.
@@ -28,7 +28,7 @@ total_time = 43200;
 %In the future, this may be a random number, however, depending on what we
 %consider the unit of distance measurement (mile, foot, etc.)
 
-time_scale=cast(4*rand() + 1, 'uint32');
+time_scale=4*rand() + 1;
 
 dumpsters = [6, 9, 12, 16]; % 0 means no dumpster...
 ndumpsters = length(dumpsters);
@@ -44,10 +44,10 @@ c.R = R;
 c.Y = Y;
 c.D = D;
 c.L = L;
-c.total_time = total_time;
+c.max_time = total_time;
 
 % Create the durations matrix, filled initially with zeroes
-c.durations = cast(zeros(m,m), 'uint32');
+c.durations = zeros(m,m);
 
 c.locs = 50 * rand(m, 2);  % Generate random points for the city
 
@@ -69,11 +69,11 @@ end
 
 
 % zero diagonal elements, as the duration from the stop to itself is 0 seconds
-c.durations = c.durations + cast(rand(m,m), 'uint32');
+c.durations = c.durations + rand(m,m);
 c.durations = c.durations - diag(diag(c.durations));
 
 % Make the distances related to the times...
-c.distances = c.durations + cast(rand(m,m), 'uint32');
+c.distances = c.durations + rand(m,m);
 c.distances = c.distances - diag(diag(c.distances));
 
 %Now that we have all of our locations, we have to determine what each kind
@@ -199,7 +199,7 @@ for i=1:R
     %I've scaled the wait times at each stop to be between 60 and 600
     %seconds (1 to 10 minutes).  This can be changed later, but I thought
     %it sounded realistic:
-    c.actions(i).wait_time = cast(540*rand() + 60, 'uint32');
+    c.actions(next_action_index).wait_time = cast(540*rand() + 60, 'uint32');
     c.actions(next_action_index).location    = next_location_index;
     
     %Now, finally, we add some constraints on what trucks can visit each

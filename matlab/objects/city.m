@@ -22,7 +22,7 @@ classdef city
         locs                                %           double                m x 2                  The x-y pairs of the locations
 
         start_location                      %           index < m             1 x 1                  The location where each truck starts
-        total_time                          %           int                   1 x 1                  Total number of seconds that the route can run
+        max_time                          %           int                   1 x 1                  Total number of seconds that the route can run
     end
 
     methods
