@@ -1,7 +1,7 @@
 % Y = # of yards, or staging areas to make
 % R = # of requests
 % L = # of landfills
-% D = # of drivers or trucks
+% D = # of drivers (or trucks)
 % display = true or false, show the city grid after making the city
 
 function [c] = generate(R, L, Y, D)

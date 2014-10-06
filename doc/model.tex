@@ -10,14 +10,15 @@
 
 \section{Notes}
 
-For the purposes of this model,  stops (or actions) are simply any action or stop that could be performed.
-This could be a `request' which comes from a customer and can only be a deliver, pickup, or replace action.
-There are actions that aren't requests: like an action at a staging area, where a dumpster is left off at a staging area.
-This means that for one staging area, there could be several different actions (or stops) that could be made.
+For this model,  actions (or stops) are any action or stop that could be performed, including all the information (like the dumpster size) that goes along with that action.
+For example, this could be a `request' which comes from a customer and can only be a deliver, pickup, or replace action.
+Otherwise it is an action at a staging area or landfill.
+(These last actions that aren't called requests.)
+For one staging area, there are likely several different actions (or stops) that could be made.
 A driver could pickup a dumpster or stage a dumpster which would be different \emph{actions} but would be at the same \emph{location}.
 This will become more clear when we define our variables.
 
-For convenience, unless otherwise noteged, 
+For convenience, unless otherwise noted, 
 $i$ will range from $1$ to $n$,
 $j$ will range from $1$ to $m$,
 $k$ will range from $1$ to $Y$,
@@ -39,17 +40,16 @@ All times can be measured in seconds.
   $Y$                          & $  Y \ge 0                                                  $  & \# of Staging Areas (or Yards)                                \\
   $R$                          & $  R \ge 0                                                  $  & \# of customer requests                                       \\
   $n$                          & $  n \ge 0                                                  $  & \# of actions, or stops                                       \\
-                               & $                                                           $  & If all trucks start at staging areas,                         \\
-  $m$                          &   Likely: $0 \le m \le n$                                      & \# of unique locations                                        \\
+  $m$                          &   $0 \le m \le n$                                              & \# of unique locations                                        \\
   $D$                          & $  D \ge 0                                                  $  & \# number of trucks (or Drivers)                              \\
   $S$                          &   For Sam's Hauling, $ |S| = 5$                                & Set of dumpster sizes                                         \\
                                & $                                                           $  & For Sam's Hauling, we will let                                \\
                                & $                                                           $  & S = \{                                                        \\
-                               & $                                                           $  &   '6'                                                         \\
-                               & $                                                           $  &   '9'                                                         \\
-                               & $                                                           $  &   '12'                                                        \\
-                               & $                                                           $  &   '16'                                                        \\
-                               & $                                                           $  &   'No Dumpster'                                               \\
+                               & $                                                           $  &   `6'                                                         \\
+                               & $                                                           $  &   `9'                                                         \\
+                               & $                                                           $  &   `12'                                                        \\
+                               & $                                                           $  &   `16'                                                        \\
+                               & $                                                           $  &   `No Dumpster'                                               \\
                                & $                                                           $  & \}                                                            \\
   $T$                          &   For Sam's Hauling, $ |T| = 3$                                & Set of possible Truck types                                   \\
                                & $                                                           $  & For Sam's Hauling, we will let                                \\
@@ -63,13 +63,14 @@ All times can be measured in seconds.
                                & $                                                           $  &  `D': deliver a dumpster                                      \\
                                & $                                                           $  &  `P': pickup a dumpster                                       \\
                                & $                                                           $  &  `R': replace a dumpster with a different one                 \\
-                               & $                                                           $  &  `T': throw away a dumpster at a landfill                     \\
+                               & $                                                           $  &  `E': throw away a dumpster at a landfill                     \\
                                & $                                                           $  &  `S': Stage a dumpster                                        \\
                                & $                                                           $  &  `U': Unstage a dumpster                                      \\
                                & $                                                           $  & \}                                                            \\
+  $T_{max}$                    & $  T_{max}   \ge 0                                          $  & Total time in a day.                                          \\
+                               & $                                                           $  & Solutions that take more time are infeasible.                 \\
 % \hline
                                & $                                                           $  &                                                               \\
-%                               & For each stop                                                  &                                                               \\
 \end{tabular}
 
 
@@ -77,85 +78,88 @@ All times can be measured in seconds.
 \begin{tabular}{ l | l | l }
  Variable name                 &                                                                & Description                                                   \\
  \hline
-  $(T^{begin}_i, T^{end}_i)$   & $  1 \le i \le n, 0\le T^{begin}_i< T^{end}_i               $  & Time windows when stop $i$ is possible                       \\
+  $I$                          & $ 1 \le I \le m, I \in \{s_k\}_{k=1}^Y                      $  & The starting index of all trucks.                             \\
+                               & $                                                           $  &                                                               \\
+                               & $                                                           $  &                                                               \\
+                               & For each stop                                                  &                                                               \\
+  $(T^{begin}_i, T^{end}_i)$   & $  1 \le i \le n, 0\le T^{begin}_i< T^{end}_i               $  & Time windows when stop $i$ is possible                        \\
   $W_i$                        & $  1 \le i \le n                                            $  & The wait time required to visit stop $i$                      \\
   $o_i$                        & $  1 \le i \le n                                            $  & Operation to be performed at stop $i$                         \\
   $(S^{in}_i, S^{out}_i)$      & $  1 \le i \le n                                            $  & The in and out dumpster sizes of each action.                 \\
                                & $                                                           $  & For example, if $o_i = $`S', then $S_i^{out} = $ No Dumpster  \\
   $l_i$                        & $  1 \le i \le n, 1 \le l_i \le m                           $  & The locations associated with each stop                       \\
-% \hline
-                               & $                                                           $  &                                                               \\
-%                               & For each location                                              &                                                               \\
-  $d_{j,l}$                    & $  1 \le j, l \le m, d_{i,j} \ge 0                          $  & Time duration to get from location $j$ to location $l$        \\
-  $c_{i,t}$                    & $  1 \le i \le m, 1 \le t \le |T|                           $  & Constraints on truck size                                     \\
+  $c_{i,t}$                    & $  1 \le i \le n, 1 \le t \le |T|                           $  & Constraints on truck size                                     \\
                                & $  c_{i,t} \in \{0, 1\}                                     $  & 1 if action $i$ is accessible by truck type $t$               \\
                                & $                                                           $  & For example, we would like to set $c_{i,t} = 0$               \\
                                & $                                                           $  & when $o_i = 'R'$ and $S^{out}_i = '16'$                       \\
 % \hline
                                & $                                                           $  &                                                               \\
-%                               & For each truck                                                 &                                                               \\
+                               & $                                                           $  &                                                               \\
+                               & For each location                                              &                                                               \\
+  $t_{j,l}$                    & $  1 \le j, l \le m, d_{i,j} \ge 0                          $  & Time duration to get from location $j$ to location $l$        \\
+  $d_{j,l}$                    & $  1 \le j, l \le m, f_{i,j} \ge 0                          $  & Distance, between location $j$ to $l$ \\
+% \hline
+                               & $                                                           $  &                                                               \\
+                               & $                                                           $  &                                                               \\
+                               & For each truck                                                 &                                                               \\
   $t_d$                        & $ 1 \le d \le D, t_i \in T                                  $  &  Truck type of truck $d$                                      \\
 % \hline
                                & $                                                           $  &                                                               \\
-%                               & For each staging area                                          &                                                               \\
+                               & $                                                           $  &                                                               \\
+                               & For each staging area                                          &                                                               \\
   $I_{k, s}$                   & $ 1 \le k \le Y, s \in S \setminus \{\mbox{`No Dumpster'}\} $  &  Initial \# of dumpsters starting out in staging area $k$     \\
                                & $                                                           $  &  This is at the beginning of the day.                         \\
-  $C_k$                        & $ 1 \le k \le Y, C_i \ge 0                                  $  &  \# of dumpsters that can fit into staging area $i$           \\
+  $C_k$                        & $ 1 \le k \le Y, C_k \ge 0                                  $  &  \# of dumpsters that can fit into staging area $k$           \\
                                & $                                                           $  &  This stands for its Capacity.                                \\
-                               & $                                                           $  & Obviously, $\sum_{j \in S} I_{i,j} \le C_i$ for each $i$      \\
-  $s_k$                        & $ 1 \le k \le Y, 1 \le s_i \le m                            $  &  location associated with staging area $i$                    \\
-  $I$                          & $ 1 \le I \le m, I \in \{s_k\}_{k=1}^Y                      $  &  The starting index of all trucks.                            \\
+                               & $                                                           $  & Obviously, $\sum_{j \in S} I_{k,j} \le C_k$ for each $k$      \\
+  $s_k$                        & $ 1 \le k \le Y, 1 \le s_i \le m                            $  & location associated with staging area $k$                     \\
+% \hline
+                               & $                                                           $  &                                                               \\
+                               & $                                                           $  &                                                               \\
+                               & For each Land fill                                           &                                                               \\
+  $F_l$                        & $  1 \le l \le L                                            $  & The fee associated with landfill $l$                          \\
+  $e_l$                        & $1 \le e_l \le m, 1 \le l \le L                             $  & The location of landfill $l$                                  \\ 
 \end{tabular}
 
 \subsection{Other thoughts}
-
-There are a few more variables that may be worth considering.
-
-\begin{tabular} { c | c | c }
-  $f_{j,l}$                    & $  1 \le j, l \le m, f_{i,j} \ge 0                          $  & Distance, (or possibly fuel cost) between location $j$ to $l$ \\
-  $T_{max}$                    & $  T_{max}   \ge 0                                          $  & Total time in a day. \\
-                               & $                                                           $  &   Solutions that take more time are infeasible.   \\
-  $F_l$                        & $  1 \le l \le L                                            $  & A fee associated with landfill $l$ \\
-\end{tabular}
-
-If we were to consider the last one, we would also need and index to associate each location to a landfill area.
 
 In matlab, the parameters 
   $L$,
   $Y$,
   $R$
-will be some of the parameters required to generate a random city in addition to several distribution parameters.
-A city will be encapsulated by the rest.
+will be required to generate a random city in addition to several distribution parameters.
+A `city' will be encapsulated by the rest.
 
-The begin times and end times are possibly more general than needed.
+The begin times and end times are more general than needed.
 However, this will allow us to let a given action happen at any time in the day, only mornings, or at specific time windows.
 It was mentioned that the third option may be required for some customers.
 
 There are $R$ different actions to represent the requests, because there is only one action associated to each.
-Then each dumpster size will have its own action for each landfill, one action where the in and out size is each dumpster size.
-Then, for each staging area, there will be actions allowing a dumpster to come in with no dumpster all leave with each dumpster size.
+Then each dumpster size will have its own action for each landfill: one action where the in and out size is each dumpster size.
+Then, for each staging area there will be actions allowing a dumpster to come in with no dumpster all leave with each dumpster size.
 Also, there will be an action coming in to each staging area with each dumpster size and leaving with no dumpster.
 That is, $n = R + (L + 2 Y) (|S| - 1)$.
 
 \section{Decision variables}
 
-The solution to the problem will be given by $D$ permutation vectors $x_d, 1 \le d \le D$.
-Let us name their lengths $r_d := length(x_d)$.
+The solution to the problem will be given by a matrix with $D$ rows and $n$ columns.
+Each row $x_d, 1 \le d \le D$ will be a permutation vector of the stops to be performed by driver $d$ (followed by $-1$'s).
+Let us name their lengths $r_d := length(x_d) \le n$.
 We will interpret the $l$-th element of $x_{d}$ (which is denoted $x_{d,l}$) as the $l$-th stop to be performed by truck $d$.
-For example, if $o_{x_{d,l}} = 'S'$, then the $l$-th stop by driver $d$ is a staging operation at a landfill.
+For example, if $o_{x_{d,l}} =$ `S', then the $l$-th stop by driver $d$ is a staging operation at a storage yard.
 
 \section{Objectives}
 
 Let us make some of the following equations simpler with these definitions.
-Let $d(x,y) = d_{x,y}$, so we have fewer subscripts.
-For convenience of later sections, let us define a function $a(i, k)$ that represents the accrued time that truck $i$ takes to complete its $k$-th stop.
-(We have assumed that $1 \le i \le D$, $1 \le k \le r_i$.)
+Let $t(x,y) = t_{x,y}$, so we have fewer subscripts.
+For convenience of later sections, let us define a function $a(d, k)$ that represents the accrued time that truck $d$ takes to complete its $k$-th stop.
+(We have assumed that $1 \le d \le D$, $1 \le k \le r_i$.)
 This is given by:
-$$a(d,l) := d(I, x_{d, 1}) + \sum_{j=1}^{l} W_{x_{d,j}} + \sum_{j=1}^{l-1} d(l_{x_{d,j}},l_{x_{d,j+1}} ).$$
+$$a(d,l) := t(I, x_{d, 1}) + \sum_{j=1}^{l} W_{x_{d,j}} + \sum_{j=1}^{l-1} t(l_{x_{d,j}},l_{x_{d,j+1}} ).$$
 That is, the time from the start location plus the times to travel between the stops, plus the time at each stop.
 
 We will simulate this as a multi objective problem.
-In revision one, this will only include the number of requests serviced along with the time taken to do so.
+In revision one, this will only include the number of requests serviced, the time taken to do so, the total distance covered, and the amount of fees accrued.
 We could use a lexicographic ordering to order these (If we have a maximum time).
 
 \subsection{Number of requests serviced}
@@ -180,6 +184,24 @@ What the simulator will likely do is return an entire vector of time-costs assoc
 If we also include fuel costs (or driving distances) between different locations, then another output will be the total distance driven.
 Finally, if this is specifically fuel costs (and not driving distance) and we include the landfill fees, we could simply add the fees to driving costs and return it as an objective.
 
+\subsection{Distance Covered}
+This is given by
+$$\sum_{d=1}^D d(I, x_{d, 1}) + \sum_{j=1}^{l-1} d(l_{x_{d,j}},l_{x_{d,j+1}} ).$$
+
+\subsection{Landfill Fees}
+This is given by
+
+\[
+\sum_{d=1}^D \sum_{j=1}^{r_d }
+\{ \begin{array}{ccc}
+ 0 & \mbox {if } & o_{x_{d,j}}  \ne \mbox{`E'} \\
+ F_l & \mbox{where } & e_l = l_{x_{d,j}} \\
+\end{array}
+\]
+
+
+
+
 \subsection{Variances in output of dumpster sizes at each staging area}
 This is future work, and might be used to ensure that dumpsters are equally (or otherwise) spread out among staging areas at the end of the day.
 This might ensure that dumpsters at staging areas are accessible for the next day.
@@ -196,8 +218,8 @@ We don't want to visit the same request twice, so for all $1 \le d, d' \le D$ an
 
 \begin{tabular}{ l r  c  l }
 1: & $ d=d'$ & and & $j = j'$ \\
-2: & $ o_{x_{d,j}}$ & $\in$ & $\{T, S, U\}$ \\
-3: & $ o_{x_{d',j'}}$ & $\in$ & $\{T, S, U\}$ \\
+2: & $ o_{x_{d,j}}$ & $\in$ & $\{E, S, U\}$ \\
+3: & $ o_{x_{d',j'}}$ & $\in$ & $\{E, S, U\}$ \\
 4: & $x_{d,j}$ & $\ne$ & $x_{d', j'}$ \\
 \end{tabular}
 
@@ -218,11 +240,14 @@ as an initial constraint.
 These mean that if a truck leaves a stop with a 9 dumpster, then he arrives at the next location with a 9x9 dumpster.
 We also assume that all trucks start out with no dumpsters.
 
+In the problem description, there is a statement that dumpsters larger than the one being requested can also be used.
+We have not incorporated this into our model yet.
+
 \subsection {Operations follow each other}
 (Yes, this is needed! But wouldn't be if we instead used a dumpster state of full, or empty (which isn't the same as no dumpster) for each stop/action.
 Then we would just need a `truck state matches' constraint, which would be as simple as the `sizes match' constraint.)
 
-For all $1 \le i \le D$, and for all $1 \le j \le r_i - 1$, we need that $follows(o_{i, j}, o_{i, j+1})$ is true, where the $follows$ predicate has the following truth table:
+For all $1 \le d \le D$, and for all $1 \le j \le r_i - 1$, we need that $follows(o_{d, j}, o_{d, j+1})$ is true, where the $follows$ predicate has the following truth table:
 
 \begin{tabular}{ c | c c c c c c }
  $follows$    & `D' & `P' & `R' & `T' & `S' & `U' \\
@@ -235,13 +260,12 @@ For all $1 \le i \le D$, and for all $1 \le j \le r_i - 1$, we need that $follow
  `U'          & T   & F   & F   & F   & T   & F   \\
 \end{tabular}
 
-Read this as operation in row $i$ can follow the operation in column $j$ if $follows(i,j) = $ T.
+Read this as operation in row $d$ can follow the operation in column $j$ if $follows(i,j) = $ T.
 
 \subsection{Constraints on Truck Types}
 
 For each $ 1 \le d \le D$ and each $1 \le j \le r_d $
 we need $$ c_{x_{d,j},t_{d}} = 1 .$$
-
 
 \subsection{Staging Area Capacities Met}
 
@@ -264,8 +288,10 @@ That is, for all $1 \le d \le D$, we have $l_{x_{d, r_d}} = I$.
 
 \section{Example}
 
-\subsection{Important note!! TODO: fixme!}
-Also, should add the variable names next to their descriptions.
+\subsection{TODO}
+Add the variable names next to their descriptions.
+Make more complicated examples.
+Add distances, and fees.
 
 
 This is an example city with $L = 1$, $Y = 1$, $R = 2$, $D = 2$, $S = \{ \mbox{9  }, \mbox{12   }, \mbox{16   }, \mbox{No Dumpster} \}$,
