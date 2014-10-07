@@ -143,6 +143,7 @@ end
 c.landfills = landfill.empty(L, 0);
 for i=1:L
     c.landfills(i).fee = 5 + rand();
+    c.landfills(i).location = next_location_index;
     
     for j = 1:ndumpsters
         c.actions(next_action_index).operation   = 'E';

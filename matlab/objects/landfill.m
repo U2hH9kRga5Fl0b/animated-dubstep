@@ -2,7 +2,8 @@
 
 classdef landfill
     properties
-        fee                                 %           int                                          The capacity of the staging area
+        fee                                 %           int                    1 x 1                 The fee of the landfill
+        location                            %           index < m              1 x 1                 The location of the landfill
     end
 
     methods

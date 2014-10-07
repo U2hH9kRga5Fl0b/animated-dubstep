@@ -17,7 +17,7 @@ scatter(c.locs(:, 1), c.locs(:, 2), sizes, colors);
 
 for i = 1:c.Y
     %List the yards
-    loc = c.locs(c.yards(i).location);
+    loc = c.locs(c.yards(i).location, :);
     if (i > 1)
         text(loc(1, 1), loc(1, 2), ...
             0, strcat(' Stop #', int2str(i)),...
@@ -39,9 +39,9 @@ for i = 1:c.Y
         'HorizontalAlignment', 'left', 'VerticalAlignment', 'top',...
         'Color', 'green');
 end
-for i = (c.Y+1):(c.Y+c.D)
+for i = 1:L
     %List the dumps
-    loc = c.locs(i);
+    loc = c.locs(c.landfills(i).location, :);
     text(loc(1, 1), loc(1, 2), 0, ' DUMP', ...
         'VerticalAlignment', 'top', 'Color', 'red');
     text(loc(1, 1), loc(1, 2), 0, strcat(' (Stop #', ...
@@ -50,7 +50,7 @@ for i = (c.Y+1):(c.Y+c.D)
 end
 for i = (8 * c.Y + 4 * c.D + 1):c.m
     %List all of the customer requests
-    loc = c.locs(c.actions(i));
+    loc = c.locs(c.actions(i), :);
     text(loc(1,1), loc(1,2), strcat(' ', c.actions(i).operation));
     text(loc(1, 1), loc(1, 2), ...
         strcat(' (Stop #', int2str(i - (Y + D)), ') '), ...
