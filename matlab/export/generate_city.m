@@ -44,7 +44,7 @@ c.R = R;
 c.Y = Y;
 c.D = D;
 c.L = L;
-c.total_time = total_time;
+c.max_time = total_time;
 
 % Create the durations matrix, filled initially with zeroes
 c.durations = cast(zeros(m,m), 'uint32');
@@ -141,6 +141,7 @@ end
 c.landfills = landfill.empty(L, 0);
 for i=1:L
     c.landfills(i).fee = 5 + rand();
+    c.landfills(i).location = next_location_index;
     
     for j = 1:ndumpsters
         c.actions(next_action_index).operation   = 'E';

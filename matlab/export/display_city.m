@@ -20,7 +20,7 @@ for i = 1:c.Y
     loc = c.locs(c.yards(i).location, :);
     if (i > 1)
         text(loc(1, 1), loc(1, 2), ...
-            0, strcat(' Stop #', int2str(i)),...
+            0, strcat(' Yard #', int2str(i)),...
             'VerticalAlignment', 'bottom', 'Color', 'green');
     end
     text(loc(1, 1), loc(1, 2), 0, 'YARD', ...
@@ -39,26 +39,33 @@ for i = 1:c.Y
         'HorizontalAlignment', 'left', 'VerticalAlignment', 'top',...
         'Color', 'green');
 end
-for i = 1:L
+for i = 1:c.L
     %List the dumps
+%   If we wanted to print the loction it would be:
+%    l = c.landfills(i).location;
     loc = c.locs(c.landfills(i).location, :);
     text(loc(1, 1), loc(1, 2), 0, ' DUMP', ...
         'VerticalAlignment', 'top', 'Color', 'red');
-    text(loc(1, 1), loc(1, 2), 0, strcat(' (Stop #', ...
-        int2str(i - c.Y), ') '), 'VerticalAlignment', 'bottom', ...
+    text(loc(1, 1), loc(1, 2), 0, strcat(' (Dump #', ...
+        int2str(i), ') '), 'VerticalAlignment', 'bottom', ...
         'Color', 'red');
 end
-for i = (8 * c.Y + 4 * c.D + 1):c.m
+
+
+
+
+for i = (c.Y + c.L + 1):c.m
     %List all of the customer requests
-    loc = c.locs(c.actions(i), :);
-    text(loc(1,1), loc(1,2), strcat(' ', c.actions(i).operation));
+    loc = c.locs(i, :);
+%    text(loc(1,1), loc(1,2), strcat(' ', c.actions(i).operation));
     text(loc(1, 1), loc(1, 2), ...
-        strcat(' (Stop #', int2str(i - (Y + D)), ') '), ...
+        strcat(' (Stop #', int2str(i - (c.Y + c.L)), ') '), ...
         'HorizontalAlignment', 'right');
 end
 
 %List the first yard
-text(c.yards(1).location(1, 1), c.yards(1).location(1, 2), 0,...
+loc = c.locs(c.yards(c.start_location).location, :);
+text(loc(1, 1), loc(1, 2), 0,...
     '(Start) #1', 'VerticalAlignment', 'bottom', 'Color', 'green');
 
 %Create the roads
