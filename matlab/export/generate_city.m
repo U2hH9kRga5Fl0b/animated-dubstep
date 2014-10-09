@@ -9,11 +9,11 @@ function [c] = generate_city(R, L, Y, D)
 n = R + 8 * Y + 4 * L;
 m = R + Y + L;
 
-n = cast(n, 'uint32');
-m = cast(m, 'uint32');
-Y = cast(Y, 'uint32');
-L = cast(L, 'uint32');
-D = cast(D, 'uint32');
+%n = cast(n, 'uint32');
+%m = cast(m, 'uint32');
+%Y = cast(Y, 'uint32');
+%L = cast(L, 'uint32');
+%D = cast(D, 'uint32');
 
 % This is the number of seconds in a 12 hour day;
 %we may want to change this, but I'm just using it as a placeholder.
