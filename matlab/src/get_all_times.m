@@ -6,6 +6,7 @@ satisfies_argument_types(c, sol);
 times = zeros(size(sol));
 
 for d=1:c.D
+    % If driver d doesn't perform any actions.
     if sol(d,1) < 0
        continue
     end
