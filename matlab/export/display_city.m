@@ -1,4 +1,7 @@
-%Now, to display the city in a visualization overview
+% Now, to display the city in a visualization overview
+
+% This function plots a city.
+
 function display_city(c)
 % TODO: this function shouldn't depend on the order the city was made!!!
 
@@ -68,12 +71,4 @@ loc = c.locs(c.yards(c.start_location).location, :);
 text(loc(1, 1), loc(1, 2), 0,...
     '(Start) #1', 'VerticalAlignment', 'bottom', 'Color', 'green');
 
-%Create the roads
-% NOTE: I've commented this out, because it clutters up the graph;
-% however, the logic works
-%for i = 1:(Y + D + n)
-%    for j = 1:(Y + D + n)
-%        line( [ locs(i, 1), locs(j, 1) ], [ locs(i, 2), locs(j, 2) ] );
-%    end
-%end
 end

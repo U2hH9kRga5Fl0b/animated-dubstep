@@ -1,8 +1,10 @@
+% Returns true when operation first_operation follows operation second_operation
+
+% first_operation and second_operation are on of the following: 'U', 'S', 'P', 'D', 'E', 'R'
+
+% author <entire group>
+
 function [is_valid] = operation_follows_operation(first_operation, second_operation)
-
-
-
-
 
 switch first_operation
 	case 'S'
@@ -34,9 +36,5 @@ switch first_operation
 		disp('It should be one of these');
 		disp('SUPERD');
 end
-
-
-
-
 
 end

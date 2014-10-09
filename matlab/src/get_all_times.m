@@ -1,9 +1,15 @@
+% This returns the time that each action is performed at.
+
+% It has the same dimension as sol, and get_times(i,j) is the time that action number sol(i,j) is performed.
+
+%    author Trever
+
 function [times] = get_all_times(c, sol)
 
 sol = cast(sol, 'int32');
 
 satisfies_argument_types(c, sol);
-times = zeros(size(sol));
+times = -ones(size(sol));
 
 for d=1:c.D
     % If driver d doesn't perform any actions.
