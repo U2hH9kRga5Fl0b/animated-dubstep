@@ -39,25 +39,26 @@ functions to write:
 correct arguments (matrix sizes)
 
 helper:
-	matrix of times when each stop is serviced
+	DONE		matrix of times when each stop is serviced
 
 constraints (return boolean):
-	make sure no request is serviced twice
-	verify that the operations follow each other
-	verify that the sizes match from stop to stop (bigger can serve smaller!!!)
-	count the inventory at each stop and make sure that it is within capacity and non-negative (somewhat harder to code than most other functions)
-	function to return whether a truck ends where it starts (maybe won't be used)
-	all action/truck type/operation constraints met
+	MATT		make sure no request is serviced twice
+	DONE		verify that the operations follow each other
+	TAMLYN		verify the first stop doesn't have a dumpster going in to it
+	TAMLYN		verify that the sizes match from stop to stop (bigger can serve smaller!!!)
+	TREVER		count the inventory at each stop and make sure that it is within capacity and non-negative (somewhat harder to code than most other functions)
+	CODY		function to return whether a truck ends where it starts (maybe won't be used)
+	TREVER		all action/truck type/operation constraints met
 
 other:
-	count the difference between the time that a truck is supposed to be at a stop and the time it actually is.
+			count the difference between the time that a truck is supposed to be at a stop and the time it actually is.
 
 
 objectives:
-	get total time for each driver
-	count the number of requests that have been serviced
-	get the total distance driven
-	get the total number of fees
+	MATT		get total time for each driver
+	TREVER		count the number of requests that have been serviced
+	CODY		get the total distance driven
+	TREVER		get the total number of fees
 
 
 
