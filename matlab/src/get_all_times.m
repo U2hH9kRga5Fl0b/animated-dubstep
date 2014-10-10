@@ -32,6 +32,7 @@ for d=1:c.number_of_drivers
         
         l1 = cast(c.actions(sol(d, i-1)).location, 'int32');
         l2 = cast(c.actions(sol(d, i  )).location, 'int32');
+        
         times(d,i) = c.durations(l1, l2) + c.actions(sol(d,i)).wait_time;
     end
 end

@@ -163,6 +163,7 @@ for i=1:R
     % R = Replace (dropoff and pickup together)
     op = datasample('PDR', 1, 'Weights', [.4 .4 .2]);
     c.actions(next_action_index).operation   = op;
+    
     switch(op)
         case 'P'
             c.actions(next_action_index).in_size     = 0;
@@ -194,7 +195,7 @@ for i=1:R
     %I've scaled the wait times at each stop to be between 60 and 600
     %seconds (1 to 10 minutes).  This can be changed later, but I thought
     %it sounded realistic:
-    c.actions(i).wait_time = cast(540*rand() + 60, 'uint32');
+    c.actions(next_action_index).wait_time = 540 * rand() + 60;
     c.actions(next_action_index).location    = next_location_index;
     
     %Now, finally, we add some constraints on what trucks can visit each
