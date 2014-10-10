@@ -21,19 +21,18 @@ end
 
 
 if any(any(sol > c.number_of_actions)) || any(any(sol < -1)) 
-	disp('This matrix has entries that are not valid indices into the number of actions.');
-	disp('The number of actions in the city:');
-	disp(c.number_of_actions);
-	disp('The maximum entry in the solution:');
-	disp(max(max(sol)));
-	disp('The minimum entry in the solution:');
-	disp(max(max(sol)));
+    warning(...
+        ['solutions matrix has entries that are not valid indices into the number of actions.' ...
+        'The number of actions in the city is %d.\n' ...
+        'The maximum entry of the city is %d.\n' ...
+        'The minimum entry of the city is %d.\n' ...
+        ], c.number_of_actions, max(max(sol)), min(min(sol)));
 	feasible = false;
 end
 
 
 if any(any(sol == 0))
-	disp('The solution matrix cannot contain zeros');
+	warning('The solution matrix cannot contain zeros');
 	feasible = false;
 	
 	% fixing...

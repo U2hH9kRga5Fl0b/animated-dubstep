@@ -28,8 +28,6 @@ for d=1:c.number_of_drivers
             break;
         end
         
-        sol(d, i)
-        
         l1 = cast(c.actions(sol(d, i-1)).location, 'int32');
         l2 = cast(c.actions(sol(d, i  )).location, 'int32');
         

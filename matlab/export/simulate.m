@@ -10,15 +10,15 @@ sol = cast(sol, 'int32');
 
 all_times = get_all_times(c, sol);
 
-is_valid = true;
-is_valid = is_valid && satisfies_operation_orders(c, sol);
-is_valid = is_valid && satisfies_truck_begin_end(c, sol);
-is_valid = is_valid && satisfies_time_windows(c, sol, all_times);
-is_valid = is_valid && satisfies_sizes_follow(c, sol);
-is_valid = is_valid && satifies_inventory_bounds(c, sol, all_times);
-is_valid = is_valid && satisfies_no_overlap(c, sol);
-is_valid = is_valid && satisfies_actions_constrains(c, sol);
-is_valid = is_valid && satisfies_starts_with_no_dumpster(c, sol);
+feasible = true;
+feasible = feasible && satisfies_operation_orders(c, sol);
+feasible = feasible && satisfies_truck_begin_end(c, sol);
+feasible = feasible && satisfies_time_windows(c, sol, all_times);
+feasible = feasible && satisfies_sizes_follow(c, sol);
+feasible = feasible && satifies_inventory_bounds(c, sol, all_times);
+feasible = feasible && satisfies_no_overlap(c, sol);
+feasible = feasible && satisfies_actions_constrains(c, sol);
+feasible = feasible && satisfies_starts_with_no_dumpster(c, sol);
 
 distances = count_distances(c, sol);
 fees = count_fees(c, sol);
