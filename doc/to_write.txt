@@ -30,13 +30,63 @@ simulate
 
 
 
+	
+	
+Remaining methods (not assigned to Trever):
+
+Matt:
+get total time for each driver:                                                 count_times.m
+make sure no request is serviced twice:                                         satisfies_no_overlap.m
+
+Cody:
+get the total distance driven:                                                  count_distances.m
+each truck starts at the start location:                                        satisfies_truck_begin_end.m
+
+Tamlyn:
+Verify that the sizes match from stop to stop:                                  satisfies_sizes_follow.m
+Verify that the first operation of each truck is either 'U' or 'P'              satisfies_starts_with_no_dumpster.m
 
 
+not assigned:
+count the deviations from the time a request is supposed to be performed:	count_time_violations.m
+for each stop, check if the time is within the time window for that action:     satisfies_time_windows.m
+	all! the tests
 
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 
 
 functions to write:
-correct arguments (matrix sizes)
 
 helper:
 	DONE		matrix of times when each stop is serviced

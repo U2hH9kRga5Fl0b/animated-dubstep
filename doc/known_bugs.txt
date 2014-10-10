@@ -1,0 +1,7 @@
+
+
+
+
+The allowable_trucks array of an action is always empty.
+
+
