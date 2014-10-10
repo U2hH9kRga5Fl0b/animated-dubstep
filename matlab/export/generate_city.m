@@ -40,6 +40,8 @@ c.number_of_drivers = D;
 c.number_of_landfills = L;
 c.max_time = total_time;
 
+c.truck_types = cast(ntrucks * rand(1, D) , 'int32');
+
 % Create the durations matrix, filled initially with zeroes
 c.durations = zeros(m,m);
 

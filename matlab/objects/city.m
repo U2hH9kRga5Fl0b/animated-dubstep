@@ -24,6 +24,7 @@ classdef city
         start_location                      %           index < m             1 x 1                  The location where each truck starts
         max_time                            %           int                   1 x 1                  Total number of seconds that the route can run
         
+        truck_types                         %           [0,|T|]               D x 1                  The type of each truck.
         
         % Convenience properties...
         location_to_landfill
