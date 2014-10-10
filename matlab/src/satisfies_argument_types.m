@@ -5,6 +5,8 @@
 
 function [feasible] = satisfies_argument_types(c, sol)
 
+feasible = true;
+
 if ~ isa(c, 'city')
     disp('The second argument must be a city!!');
     
