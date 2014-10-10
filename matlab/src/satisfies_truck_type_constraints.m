@@ -3,7 +3,7 @@
 % author: Trever
 
 
-function [is_valid] = satisfies_actions_constraints(c, sol)
+function [is_valid] = satisfies_truck_type_constraints(c, sol)
 
 is_valid = true;
 

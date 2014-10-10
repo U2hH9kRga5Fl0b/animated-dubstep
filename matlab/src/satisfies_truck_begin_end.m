@@ -10,8 +10,8 @@
 
 %   author Cody
 
-function [number_of_requests_serviced] = satisfies_truck_begin_end(c, sol)
+function [is_valid] = satisfies_truck_begin_end(c, sol)
 
-number_of_requests_serviced = 0;
+is_valid = true;
 
 end

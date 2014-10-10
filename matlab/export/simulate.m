@@ -15,16 +15,15 @@ feasible = feasible && satisfies_operation_orders(c, sol);
 feasible = feasible && satisfies_truck_begin_end(c, sol);
 feasible = feasible && satisfies_time_windows(c, sol, all_times);
 feasible = feasible && satisfies_sizes_follow(c, sol);
-feasible = feasible && satifies_inventory_bounds(c, sol, all_times);
+feasible = feasible && satisfies_inventory_bounds(c, sol, all_times);
 feasible = feasible && satisfies_no_overlap(c, sol);
-feasible = feasible && satisfies_actions_constrains(c, sol);
+feasible = feasible && satisfies_truck_type_constraints(c, sol);
 feasible = feasible && satisfies_starts_with_no_dumpster(c, sol);
 
 distances = count_distances(c, sol);
 fees = count_fees(c, sol);
 times = count_times(c, sol, all_times);
 num_serviced = count_num_requests(c, sol);
-
 
 end
 

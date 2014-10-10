@@ -11,6 +11,6 @@
 
 function [is_valid] = satisfies_sizes_follow(c, sol)
 
-is_valid = false;
+is_valid = true;
 
 end
