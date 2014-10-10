@@ -10,7 +10,7 @@
 
 function [end_times] = count_times(c, sol, all_times)
 
-end_times = zeros(c.number_of_drivers, 1);
+end_times = zeros(1, c.number_of_drivers);
 
 % This is the last non-negative entry of each row of all_times
 

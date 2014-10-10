@@ -85,6 +85,10 @@ c.start_location = 1;
 %Initialize the yards with an empty array
 c.yards = staging_area.empty(Y, 0);
 
+
+c.location_to_landfill = cast(zeros(1, m), 'int32');
+c.location_to_stagingarea = cast(zeros(1, m), 'int32');
+
 %Initialize the actions with an empty array
 c.actions = action.empty(n, 0);
 next_action_index   = cast(1, 'uint32');
@@ -130,6 +134,8 @@ for i = 1:Y
         next_action_index = next_action_index + 1;
     end
     
+    c.location_to_stagingarea(next_location_index) = i;
+    
     next_location_index = next_location_index + 1;
 end
 
@@ -151,6 +157,9 @@ for i=1:L
         
         next_action_index = next_action_index + 1;
     end
+    
+    
+    c.location_to_landfill(next_location_index) = i;
     
     next_location_index = next_location_index + 1;
 end
