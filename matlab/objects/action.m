@@ -20,7 +20,7 @@ classdef action
         wait_time                             %           time                  1 x 1                  The wait time required to visit stop $i$
         location                              %           index < m             1 x 1                  The location where the stop happens at.
         
-        allowable_trucks                      %           [0,1]             |T|-1 x 1                  The trucks that allowed at this location.
+        allowable_truck_types                 %           [0,1]             |T|-1 x 1                  The truck types that allowed at this location.
     end
 
     methods

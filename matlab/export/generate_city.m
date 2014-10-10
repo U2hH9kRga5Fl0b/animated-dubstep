@@ -28,7 +28,7 @@ dumpsters = [6, 9, 12, 16]; % 0 means no dumpster...
 ndumpsters = length(dumpsters);
 
 trucks = ['small', 'medium', 'large'];
-ntrucks = length(trucks);
+ntrucks = 3;
 
 % Set the basic data from the parameter list
 c = city;
@@ -114,7 +114,7 @@ for i = 1:Y
         c.actions(next_action_index).stop_time   = total_time;
         c.actions(next_action_index).wait_time   = 5;
         c.actions(next_action_index).location    = next_location_index;
-        c.actions(next_action_index).allowable_trucks = ones(1,ntrucks);
+        c.actions(next_action_index).allowable_truck_types = ones(1,ntrucks);
         
         next_action_index = next_action_index + 1;
         
@@ -125,7 +125,7 @@ for i = 1:Y
         c.actions(next_action_index).stop_time   = total_time;
         c.actions(next_action_index).wait_time   = 5;
         c.actions(next_action_index).location    = next_location_index;
-        c.actions(next_action_index).allowable_trucks = ones(1,ntrucks);
+        c.actions(next_action_index).allowable_truck_types = ones(1,ntrucks);
         
         next_action_index = next_action_index + 1;
     end
@@ -147,7 +147,7 @@ for i=1:L
         c.actions(next_action_index).stop_time   = total_time;
         c.actions(next_action_index).wait_time   = 10;
         c.actions(next_action_index).location    = next_location_index;
-        c.actions(next_action_index).allowable_trucks = ones(1,ntrucks);
+        c.actions(next_action_index).allowable_truck_types = ones(1,ntrucks);
         
         next_action_index = next_action_index + 1;
     end
@@ -205,11 +205,11 @@ for i=1:R
     %the smallest truck, size 1.
     if ((op == 'P' || op == 'R') ...
         && c.actions(next_action_index).out_size == 16)
-        c.actions(next_action_index).allowable_trucks = [1 zeros(1, ntrucks-1)];
+        c.actions(next_action_index).allowable_truck_types = [1 zeros(1, ntrucks-1)];
     elseif (rand() < .5)
-        c.actions(next_action_index).allowable_trucks = [1 zeros(1, ntrucks-1)];
+        c.actions(next_action_index).allowable_truck_types = [1 zeros(1, ntrucks-1)];
     else
-        c.actions(next_action_index).allowable_trucks = ones(1,ntrucks);
+        c.actions(next_action_index).allowable_truck_types = ones(1,ntrucks);
     end
     
     % move to the next action/location
