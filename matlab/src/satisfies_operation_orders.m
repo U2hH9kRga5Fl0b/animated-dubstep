@@ -12,8 +12,8 @@ function [is_valid] = satisfies_operation_orders(c, sol)
 
 is_valid = true;
 
-for d=1:c.D
-	for i=1:c.n-1
+for d=1:c.number_of_drivers
+	for i=1:c.number_of_actions-1
 		% We have hit the end of this route.
 		if sol(d,i) <= 0
 			continue

@@ -7,6 +7,6 @@
 
 function [distances] = count_distances(c, sol)
 
-distances = zeros(1, c.D);
+distances = zeros(1, c.number_of_drivers);
 
 end

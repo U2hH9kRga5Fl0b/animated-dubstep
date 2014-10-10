@@ -12,7 +12,7 @@ if ~ isa(c, 'city')
     return
 end
 
-if ~ isequal(size(sol), [ c.D, c.n])
+if ~ isequal(size(sol), [ c.number_of_drivers, c.number_of_actions])
     disp('Your solution is of the wrong dimension!!');
     
     feasible = false;
@@ -20,10 +20,10 @@ if ~ isequal(size(sol), [ c.D, c.n])
 end
 
 
-if any(any(sol > c.n)) || any(any(sol < -1)) 
+if any(any(sol > c.number_of_actions)) || any(any(sol < -1)) 
 	disp('This matrix has entries that are not valid indices into the number of actions.');
 	disp('The number of actions in the city:');
-	disp(c.n);
+	disp(c.number_of_actions);
 	disp('The maximum entry in the solution:');
 	disp(max(max(sol)));
 	disp('The minimum entry in the solution:');

@@ -12,13 +12,13 @@ sol = generate_rand_solution(c)
 
 
 % This is the number of actions
-c.n
+c.number_of_actions
 
 
 
 
 % This is the number of drivers
-c.D
+c.number_of_drivers
 
 
 

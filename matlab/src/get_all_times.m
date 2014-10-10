@@ -11,7 +11,7 @@ sol = cast(sol, 'int32');
 satisfies_argument_types(c, sol);
 times = -ones(size(sol));
 
-for d=1:c.D
+for d=1:c.number_of_drivers
     % If driver d doesn't perform any actions.
     if sol(d,1) < 0
        continue
@@ -23,7 +23,7 @@ for d=1:c.D
     times(d,1) = c.durations(c.start_location,firstLoc) ...
         + c.actions(1).wait_time;
     
-    for i=2:c.n
+    for i=2:c.number_of_actions
         if sol(d,i) < 0
             break;
         end

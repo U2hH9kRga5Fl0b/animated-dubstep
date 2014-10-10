@@ -9,12 +9,6 @@ function [c] = generate_city(R, L, Y, D)
 n = R + 8 * Y + 4 * L;
 m = R + Y + L;
 
-%n = cast(n, 'uint32');
-%m = cast(m, 'uint32');
-%Y = cast(Y, 'uint32');
-%L = cast(L, 'uint32');
-%D = cast(D, 'uint32');
-
 % This is the number of seconds in a 12 hour day;
 %we may want to change this, but I'm just using it as a placeholder.
 % This is necessary when setting morning or evening time windows below.
@@ -38,16 +32,16 @@ ntrucks = length(trucks);
 
 % Set the basic data from the parameter list
 c = city;
-c.m = m;
-c.n = n;
-c.R = R;
-c.Y = Y;
-c.D = D;
-c.L = L;
+c.number_of_locations = m;
+c.number_of_actions = n;
+c.number_of_requests = R;
+c.number_of_staging_areas = Y;
+c.number_of_drivers = D;
+c.number_of_landfills = L;
 c.max_time = total_time;
 
 % Create the durations matrix, filled initially with zeroes
-c.durations = cast(zeros(m,m), 'uint32');
+c.durations = zeros(m,m);
 
 c.locs = 50 * rand(m, 2);  % Generate random points for the city
 
@@ -69,11 +63,11 @@ end
 
 
 % zero diagonal elements, as the duration from the stop to itself is 0 seconds
-c.durations = c.durations + cast(rand(m,m), 'uint32');
+c.durations = c.durations + rand(m,m);
 c.durations = c.durations - diag(diag(c.durations));
 
 % Make the distances related to the times...
-c.distances = c.durations + cast(rand(m,m), 'uint32');
+c.distances = c.durations + rand(m,m);
 c.distances = c.distances - diag(diag(c.distances));
 
 %Now that we have all of our locations, we have to determine what each kind
@@ -120,6 +114,7 @@ for i = 1:Y
         c.actions(next_action_index).stop_time   = total_time;
         c.actions(next_action_index).wait_time   = 5;
         c.actions(next_action_index).location    = next_location_index;
+        c.actions(next_action_index).allowable_trucks = ones(1,ntrucks);
         
         next_action_index = next_action_index + 1;
         
@@ -130,6 +125,7 @@ for i = 1:Y
         c.actions(next_action_index).stop_time   = total_time;
         c.actions(next_action_index).wait_time   = 5;
         c.actions(next_action_index).location    = next_location_index;
+        c.actions(next_action_index).allowable_trucks = ones(1,ntrucks);
         
         next_action_index = next_action_index + 1;
     end
@@ -151,6 +147,7 @@ for i=1:L
         c.actions(next_action_index).stop_time   = total_time;
         c.actions(next_action_index).wait_time   = 10;
         c.actions(next_action_index).location    = next_location_index;
+        c.actions(next_action_index).allowable_trucks = ones(1,ntrucks);
         
         next_action_index = next_action_index + 1;
     end
@@ -208,11 +205,11 @@ for i=1:R
     %the smallest truck, size 1.
     if ((op == 'P' || op == 'R') ...
         && c.actions(next_action_index).out_size == 16)
-        c.actions(next_action_index).allowable_trucks = [zeros(ntrucks-1,1); 1];
+        c.actions(next_action_index).allowable_trucks = [1 zeros(1, ntrucks-1)];
     elseif (rand() < .5)
-        c.actions(next_action_index).allowable_trucks = [1; zeros(ntrucks-1,1)];
+        c.actions(next_action_index).allowable_trucks = [1 zeros(1, ntrucks-1)];
     else
-        c.actions(next_action_index).allowable_trucks = ones(ntrucks,1);
+        c.actions(next_action_index).allowable_trucks = ones(1,ntrucks);
     end
     
     % move to the next action/location
