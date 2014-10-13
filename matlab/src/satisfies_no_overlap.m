@@ -45,7 +45,10 @@ for n = 1:c.number_of_actions
     end
 end
 
-% This could probably be done in quadratic time if we kept a running sum of the number of times each location was visited:
+% This could probably be done in quadratic time if we kept a running sum of the number of times each location was visited.
+%
+% I haven't run this, but could be future debugging work.
+%
 %times_visited = zeros(1, c.number_of_locations);
 %for d = 1:c.number_of_drivers
 %	for s=1:c.number_of_actions
