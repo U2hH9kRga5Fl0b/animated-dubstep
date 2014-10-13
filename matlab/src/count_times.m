@@ -11,18 +11,6 @@
 
 function [end_times] = count_times(all_times)
 
-%end_times = zeros(c.number_of_drivers, 1);
-%
-%% This adds up the last non-negative entry of each row of all_times
-%for i = 1:c.number_of_drivers
-%    for j = 1:length(all_times(1, :))
-%        if ( all_times(i,j) >= 0 )
-%            end_times(i) = end_times(i) + all_times(i, j);
-%        end
-%    end
-%end
-
-
 end_times = max(max(all_times, [], 2), 0);
 
 end
