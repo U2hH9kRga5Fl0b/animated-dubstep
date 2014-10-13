@@ -7,7 +7,7 @@
 %    author Matt
 
 % All this function takes is all_times calculated by the get_all_times
-% function, and it returns the last time each driver visists any stops.
+% function, and it returns the last time each driver visits any stops.
 
 function [end_times] = count_times(all_times)
 
