@@ -4,13 +4,11 @@
 
 function [feasible, times, distances, num_serviced, fees] = simulate(c, sol)
 
-satisfies_argument_types(c, sol)
+feasible = satisfies_argument_types(c, sol);
 
 sol = cast(sol, 'int32');
-
 all_times = get_all_times(c, sol);
 
-feasible = true;
 feasible = feasible && satisfies_operation_orders(c, sol);
 feasible = feasible && satisfies_truck_begin_end(c, sol);
 feasible = feasible && satisfies_time_windows(c, sol, all_times);
