@@ -22,7 +22,7 @@ feasible = feasible && satisfies_starts_with_no_dumpster(c, sol);
 
 distances = count_distances(c, sol);
 fees = count_fees(c, sol);
-times = count_times(c, sol, all_times);
+times = count_times(all_times);
 num_serviced = count_num_requests(c, sol);
 
 end
