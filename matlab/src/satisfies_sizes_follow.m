@@ -12,6 +12,7 @@
 function [is_valid] = satisfies_sizes_follow(c, sol)
 
 is_valid = true;
+
 for d=1:c.number_of_drivers
     for a=1:c.number_of_actions-1 
         % We have hit the end of this route.

@@ -5,20 +5,20 @@
 function display_city(c)
 % TODO: this function shouldn't depend on the order the city was made!!!
 
-sizes = 3 * ones(c.m, 1);
-colors = ones(c.m, 1);
+sizes = 3 * ones(c.number_of_locations, 1);
+colors = ones(c.number_of_locations, 1);
 
-for i=1:c.Y
+for i=1:c.number_of_staging_areas
     colors(i, 1) = 4;
 end
-for i=(1+c.Y):(c.D + c.Y)
+for i=(1+c.number_of_staging_areas):(c.number_of_drivers + c.number_of_staging_areas)
     colors(i, 1) = 7;
 end
 
 %need starts, roads, wait times, sizes, number of trucks
 scatter(c.locs(:, 1), c.locs(:, 2), sizes, colors);
 
-for i = 1:c.Y
+for i = 1:c.number_of_staging_areas
     %List the yards
     loc = c.locs(c.yards(i).location, :);
     if (i > 1)
@@ -26,7 +26,7 @@ for i = 1:c.Y
             0, strcat(' Yard #', int2str(i)),...
             'VerticalAlignment', 'bottom', 'Color', 'green');
     end
-    text(loc(1, 1), loc(1, 2), 0, 'YARD', ...
+    text(loc(1, 1), loc(1, 2), 0, strcat('Stops ', int2str(8 * (i - 1) + 1), '-', int2str(8 * i), ','), ...
         'HorizontalAlignment', 'right', ...
         'VerticalAlignment', 'bottom', 'Color', 'green');
     text(loc(1, 1), loc(1, 2), 0, ...
@@ -42,13 +42,15 @@ for i = 1:c.Y
         'HorizontalAlignment', 'left', 'VerticalAlignment', 'top',...
         'Color', 'green');
 end
-for i = 1:c.L
+for i = 1:c.number_of_landfills
     %List the dumps
 %   If we wanted to print the loction it would be:
 %    l = c.landfills(i).location;
     loc = c.locs(c.landfills(i).location, :);
     text(loc(1, 1), loc(1, 2), 0, ' DUMP', ...
         'VerticalAlignment', 'top', 'Color', 'red');
+    text(loc(1, 1), loc(1, 2), 0, strcat('Stops ', int2str(4 * (i - 1) + 1 + c.number_of_staging_areas * 8), '-', int2str(4 * i + c.number_of_staging_areas * 8), ','), ...
+        'HorizontalAlignment', 'right', 'Color', 'red');
     text(loc(1, 1), loc(1, 2), 0, strcat(' (Dump #', ...
         int2str(i), ') '), 'VerticalAlignment', 'bottom', ...
         'Color', 'red');
@@ -57,13 +59,16 @@ end
 
 
 
-for i = (c.Y + c.L + 1):c.m
+for i = (c.number_of_staging_areas + c.number_of_landfills + 1):c.number_of_locations
     %List all of the customer requests
     loc = c.locs(i, :);
 %    text(loc(1,1), loc(1,2), strcat(' ', c.actions(i).operation));
     text(loc(1, 1), loc(1, 2), ...
-        strcat(' (Stop #', int2str(i - (c.Y + c.L)), ') '), ...
+        strcat(c.actions(8 * c.number_of_staging_areas + 4 * c.number_of_landfills + i - c.number_of_staging_areas - c.number_of_landfills).operation, ' (Request #', int2str(i - (c.number_of_staging_areas + c.number_of_landfills)), ') '), ...
         'HorizontalAlignment', 'right');
+    text(loc(1, 1), loc(1, 2), ...
+        strcat(' Stop# ', int2str(8 * c.number_of_staging_areas + 4 * c.number_of_landfills + i - c.number_of_staging_areas - c.number_of_landfills), ','), ...
+        'HorizontalAlignment', 'left');
 end
 
 %List the first yard

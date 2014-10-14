@@ -31,6 +31,8 @@ switch first_operation
 		is_valid = second_operation == 'E';
 	otherwise
 		is_valid = false;
+		
+		% This should use the warning() function!
 		disp('Bad operation. We found:');
 		disp(cast(first_operation, 'char'));
 		disp('It should be one of these');

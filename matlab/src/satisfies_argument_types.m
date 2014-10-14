@@ -5,6 +5,8 @@
 
 function [feasible] = satisfies_argument_types(c, sol)
 
+feasible = true;
+
 if ~ isa(c, 'city')
     disp('The second argument must be a city!!');
     
@@ -12,7 +14,7 @@ if ~ isa(c, 'city')
     return
 end
 
-if ~ isequal(size(sol), [ c.D, c.n])
+if ~ isequal(size(sol), [ c.number_of_drivers, c.number_of_actions])
     disp('Your solution is of the wrong dimension!!');
     
     feasible = false;
@@ -20,20 +22,19 @@ if ~ isequal(size(sol), [ c.D, c.n])
 end
 
 
-if any(any(sol > c.n)) || any(any(sol < -1)) 
-	disp('This matrix has entries that are not valid indices into the number of actions.');
-	disp('The number of actions in the city:');
-	disp(c.n);
-	disp('The maximum entry in the solution:');
-	disp(max(max(sol)));
-	disp('The minimum entry in the solution:');
-	disp(max(max(sol)));
+if any(any(sol > c.number_of_actions)) || any(any(sol < -1)) 
+    warning(...
+        ['solutions matrix has entries that are not valid indices into the number of actions.' ...
+        'The number of actions in the city is %d.\n' ...
+        'The maximum entry of the city is %d.\n' ...
+        'The minimum entry of the city is %d.\n' ...
+        ], c.number_of_actions, max(max(sol)), min(min(sol)));
 	feasible = false;
 end
 
 
 if any(any(sol == 0))
-	disp('The solution matrix cannot contain zeros');
+	warning('The solution matrix cannot contain zeros');
 	feasible = false;
 	
 	% fixing...
