@@ -25,8 +25,8 @@ for d=1:c.number_of_drivers
 		second_operation = c.actions(sol(d,i+1)).operation;
 
 		% Check if this sequence is valid
-		is_valid = operation_follows_operation(first_operation, second_operation);
-		if not(is_valid)
+		this_is_valid = operation_follows_operation(first_operation, second_operation);
+		if not(this_is_valid)
 			is_valid = false;
 			% We could use the error function here...
 			warning(['The operations did not follow each other.\n' ...
