@@ -23,7 +23,7 @@ for d = 1:c.number_of_drivers
     end
 %    if c.actions(sol(d,1)).insize ~= 0
 %        is_valid = false;
-%        fprintf(['Driver %d''s first operation is %s.\n'...
+%        warning(['Driver %d''s first operation is %s.\n'...
 %            '   The first operation cannot have a dumpster, so it can only be a P or U.\n\n'], d, s); 
 %    end
 end
