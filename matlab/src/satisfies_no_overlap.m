@@ -35,8 +35,8 @@ for n = 1:c.number_of_actions
             end
             
             if ( count == 2 )
-                error_flag = strcat('Stop ', int2str(n), ' is visited more than once; this is a customer request ', ...
-				'The second time is by driver ', int2str(i), ' at stop ', int2str(j));
+                error_flag = strcat('Stop #', int2str(n), ' is visited more than once - this is a customer request. ', ...
+				'   The second time is by driver #', int2str(i), ' at stop #', int2str(j), '.');
                 warning(error_flag);
                 is_valid = false;
                 count = count + 1;
