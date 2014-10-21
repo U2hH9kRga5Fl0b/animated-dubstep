@@ -1,7 +1,7 @@
 function [is_valid] = test_start_end_are_same(c, sol)
 is_valid = true;
 for d=1:c.number_of_drivers
-    for a=2:c.number_of_actions
+    a=1
     if sol(d,a) <= 0
          continue
     end
