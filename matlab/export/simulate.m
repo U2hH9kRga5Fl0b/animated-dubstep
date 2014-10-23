@@ -2,6 +2,9 @@
 % This function simulates a solution to a city.
 % It returns whether the solution is feasible and all the objectives.
 
+
+% TODO: this should return the number of dumpsters at each staging area.
+
 function [feasible, times, distances, num_serviced, fees] = simulate(c, sol, v, checkall)
 
 if nargin < 4

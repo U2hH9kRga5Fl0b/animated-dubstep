@@ -14,7 +14,7 @@ error_flag = ' ';
 
 % We can probably get around depending on the actions being in a certain order if we just skip the actions we don't care about.
 
-% for n = (4 * c.number_of_landfills + 8 * c.number_of_staging_areas + 1):c.number_of_actions
+% for n = (4 * c.number_of_landfills + 8 * c.number_of_staging_areas + 1):size(sol,2)
 for n = 1:c.number_of_actions
     op = c.actions(n).operation;
     if op == 'U' || op == 'S' || op == 'E'
