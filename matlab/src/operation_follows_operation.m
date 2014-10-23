@@ -32,7 +32,7 @@ switch first_operation
 	otherwise
 		is_valid = false;
 		
-		% This should use the wanring() function!
+		% This should use the warning() function!
 		disp('Bad operation. We found:');
 		disp(cast(first_operation, 'char'));
 		disp('It should be one of these');
