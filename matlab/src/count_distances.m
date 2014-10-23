@@ -18,7 +18,7 @@ for x=1:c.number_of_drivers
     distances(1,x) = c.distances(c.start_location, ...
         c.actions(sol(x,1)).location);
     
-    for s=2:c.number_of_actions
+    for s=2:size(sol, 2)
         if sol(x,s) < 0
             continue;
         end

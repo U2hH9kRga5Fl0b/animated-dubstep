@@ -7,7 +7,7 @@ function [total_fees] = count_fees(c, sol)
 total_fees = 0;
 
 for d=1:c.number_of_drivers
-    for s=1:c.number_of_actions
+    for s=1:size(sol, 2)
         stop = sol(d,s);
         
         if stop < 0

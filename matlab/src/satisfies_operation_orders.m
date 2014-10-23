@@ -8,12 +8,12 @@
 
 % author  <entire group>
 
-function [is_valid] = satisfies_operation_orders(c, sol)
+function [is_valid] = satisfies_operation_orders(c, sol, v)
 
 is_valid = true;
 
 for d=1:c.number_of_drivers
-	for i=1:c.number_of_actions-1
+	for i=1:size(sol, 2)-1
 		% We have hit the end of this route.
 		if sol(d,i+1) <= 0
 			continue
@@ -28,12 +28,14 @@ for d=1:c.number_of_drivers
 		this_is_valid = operation_follows_operation(first_operation, second_operation);
 		if not(this_is_valid)
 			is_valid = false;
-			% We could use the error function here...
-			warning(['The operations did not follow each other.\n' ...
-                'for driver %d\nwhile going from stop %d to stop %d\n' ...
-                'first operation = %c, second operation = %c'], d, i, i+1, ...
-                cast(first_operation, 'char'), ...
-                cast(second_operation, 'char'));
+            if v
+                % We could use the error function here...
+                warning(['The operations did not follow each other.\n' ...
+                    'for driver %d\nwhile going from stop %d to stop %d\n' ...
+                    'first operation = %c, second operation = %c'], d, i, i+1, ...
+                    cast(first_operation, 'char'), ...
+                    cast(second_operation, 'char'));
+            end
 		end
 	end
 end

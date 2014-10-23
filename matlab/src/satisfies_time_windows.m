@@ -9,12 +9,12 @@
 % sol is the solution
 % all_times is the time that each action represented by sol is performed (taken from get_all_times.m)
 
-function [is_valid] = satisfies_time_windows(c, sol, all_times)
+function [is_valid] = satisfies_time_windows(c, sol, all_times, v)
 
 is_valid = true;
 
 for d=1:c.number_of_drivers
-    for s=1:c.number_of_actions
+    for s=1:size(sol, 2)
         if sol(d,s) < 0
             break;
         end
@@ -24,18 +24,22 @@ for d=1:c.number_of_drivers
          
         if time_serviced < a.start_time
             is_valid = false;
-            warning(['Stop made before start of time window.' ...
-                'driver: %d, index %d, time=%d\n' ...
-                'time window = (%d, %d)'],...
-                 d, s, time_serviced, a.start_time, a.stop_time);
+            if v
+                warning(['Stop made before start of time window.' ...
+                    'driver: %d, index %d, time=%d\n' ...
+                    'time window = (%d, %d)'],...
+                     d, s, time_serviced, a.start_time, a.stop_time);
+            end
         end
        
         if time_serviced > a.stop_time
             is_valid = false;
-            warning(['Stop made after end of time window.' ...
-                'driver: %d, index %d, time=%d\n' ...
-                'time window = (%d, %d)'],...
-                d, s, time_serviced, a.stop_time, a.stop_time);
+            if v
+                warning(['Stop made after end of time window.' ...
+                    'driver: %d, index %d, time=%d\n' ...
+                    'time window = (%d, %d)'],...
+                    d, s, time_serviced, a.stop_time, a.stop_time);
+            end
         end
     end
 end

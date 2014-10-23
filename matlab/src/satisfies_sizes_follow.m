@@ -9,12 +9,12 @@
 
 % author:    Tamlyn
 
-function [is_valid] = satisfies_sizes_follow(c, sol)
+function [is_valid] = satisfies_sizes_follow(c, sol, v)
 
 is_valid = true;
 
 for d=1:c.number_of_drivers
-    for a=1:c.number_of_actions-1 
+    for a=1:size(sol, 2)-1 
         % We have hit the end of this route.
         if sol(d,a+1) <= 0
                 continue
@@ -26,10 +26,12 @@ for d=1:c.number_of_drivers
         in = c.actions(sol(d,a+1)).in_size;
         if  out ~= in
             is_valid = false;
-            warning(['Dumpster size problem:\n'...
-                '   Driver %d left stop %d with dumper size %d\n'...
-                '   and stop %d calls for dumpster size %d.\n\n'],...
-                d, a, out, a+1, in); 
+            if v
+                warning(['Dumpster size problem:\n'...
+                    '   Driver %d left stop %d with dumper size %d\n'...
+                    '   and stop %d calls for dumpster size %d.\n\n'],...
+                    d, a, out, a+1, in); 
+            end
         end
     end
 end

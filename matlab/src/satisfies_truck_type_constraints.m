@@ -3,13 +3,13 @@
 % author: Trever
 
 
-function [is_valid] = satisfies_truck_type_constraints(c, sol)
+function [is_valid] = satisfies_truck_type_constraints(c, sol, v)
 
 is_valid = true;
 
 for d=1:c.number_of_drivers
     type = c.truck_types(d);
-    for s=1:c.number_of_actions
+    for s=1:size(sol, 2)
         stop = sol(d,s);
         
         % Hit end of route...
@@ -20,9 +20,11 @@ for d=1:c.number_of_drivers
         allowed = c.actions(stop).allowable_truck_types;
         if ~ allowed(type)
             is_valid = false;
-            warning(['Truck type constraint not met.\n' ...
-                ' driver: %d, stop %d, type %d, action %d\n'], ...
-                 d, s, type, stop);
+            if v
+                warning(['Truck type constraint not met.\n' ...
+                    ' driver: %d, stop %d, type %d, action %d\n'], ...
+                     d, s, type, stop);
+            end
         end
     end
 end

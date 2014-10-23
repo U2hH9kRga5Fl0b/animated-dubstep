@@ -20,6 +20,8 @@ classdef city
         distances                           %           meters                m x m                  The distance between all locations
         
         locs                                %           double                m x 2                  The x-y pairs of the locations
+        addresses                           %           cell array            m x 1                  If this city was generated from data from the ui team,
+                                            %                                                               this is set to the addresses of the cities.
 
         start_location                      %           index < m             1 x 1                  The location where each truck starts
         max_time                            %           int                   1 x 1                  Total number of seconds that the route can run

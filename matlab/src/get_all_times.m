@@ -23,7 +23,7 @@ for d=1:c.number_of_drivers
     times(d,1) = c.durations(c.start_location, firstLoc) ...
         + c.actions(sol(d,1)).wait_time;
     
-    for i=2:c.number_of_actions
+    for i=2:size(sol, 2)
         if sol(d,i) < 0
             break;
         end
