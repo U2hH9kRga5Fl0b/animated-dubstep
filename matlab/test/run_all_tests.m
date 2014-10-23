@@ -5,15 +5,22 @@ test_translate
 test_empty_solution
 test_over_capacity
 test_generate_solution
+test_solution_dimensions
+
+
+
+% In progress
+test_negative_inventory
+test_no_requests_but_mach_traffic
+test_starting_location_is_staging_area
+test_weird_arguments
+
+
+% Can't run yet
+% test_constants_match
+
 %test_zero_landfills.incomplete
 %test_time_windows.incomplete
 %test_driver_overlap.incomplete
 
-% ?
-%test_start_end_are_same.incomplete
 
-
-assert(simulate(c, -ones(c.number_of_drivers, 1)), 'Empty solution should be valid.');
-assert(simulate(c, -ones(c.number_of_drivers, c.number_of_actions)), 'Empty solution should be valid.');
-assert(simulate(c, -ones(c.number_of_drivers, c.number_of_actions * 5)), 'Empty solution should be valid.');
-assert(simulate(c, -ones(c.number_of_drivers, c.number_of_actions * 100)), 'Empty solution should be valid.');
