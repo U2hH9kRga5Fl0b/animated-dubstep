@@ -3,7 +3,7 @@
 % author Trever
 
 
-function [feasible] = satisfies_argument_types(c, sol)
+function [feasible] = satisfies_argument_types(c, sol, v)
 
 feasible = true;
 
@@ -14,7 +14,7 @@ if ~ isa(c, 'city')
     return
 end
 
-if ~ isequal(size(sol), [ c.number_of_drivers, c.number_of_actions])
+if size(sol, 1) ~= c.number_of_drivers
     disp('Your solution is of the wrong dimension!!');
     
     feasible = false;
@@ -22,13 +22,15 @@ if ~ isequal(size(sol), [ c.number_of_drivers, c.number_of_actions])
 end
 
 
-if any(any(sol > c.number_of_actions)) || any(any(sol < -1)) 
-    warning(...
-        ['solutions matrix has entries that are not valid indices into the number of actions.' ...
-        'The number of actions in the city is %d.\n' ...
-        'The maximum entry of the city is %d.\n' ...
-        'The minimum entry of the city is %d.\n' ...
-        ], c.number_of_actions, max(max(sol)), min(min(sol)));
+if any(any(sol > c.number_of_actions)) || any(any(sol < -1))
+    if v
+        warning(...
+            ['solutions matrix has entries that are not valid indices into the number of actions.' ...
+            'The number of actions in the city is %d.\n' ...
+            'The maximum entry of the city is %d.\n' ...
+            'The minimum entry of the city is %d.\n' ...
+            ], c.number_of_actions, max(max(sol)), min(min(sol)));
+    end
 	feasible = false;
 end
 

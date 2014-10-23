@@ -3,7 +3,7 @@
 
 % Trever
 
-function [is_valid] = satisfies_inventory_bounds(c,sol, all_times)
+function [is_valid] = satisfies_inventory_bounds(c, sol, all_times, v)
 
 is_valid = true;
 
@@ -46,7 +46,9 @@ for t=ts
 			dsize = a.in_size;
 			idx = size_to_index(dsize);
 			if idx < 0
-				warning('Invalid in_size: %d for driver %d at stop %d.\n', a.in_size, d(i), s(i));
+                if v
+                    warning('Invalid in_size: %d for driver %d at stop %d.\n', a.in_size, d(i), s(i));
+                end
 				is_valid = false;
 				continue
 			end
@@ -55,7 +57,9 @@ for t=ts
 			dsize = a.out_size;
 			idx = size_to_index(dsize);
 			if idx < 0
-				warning('Invalid in_size: %d for driver %d at stop %d.\n', a.in_size, d(i), s(i));
+                if v
+                    warning('Invalid in_size: %d for driver %d at stop %d.\n', a.in_size, d(i), s(i));
+                end
 				is_valid = false;
 				continue
 			end
@@ -68,14 +72,18 @@ for t=ts
 		inventories(yard_idx, :) = inventories(yard_idx, :) + delta;
 		
 		if any(inventories(yard_idx, :) < 0)
-			warning('Negative inventory for size %d driver %d stop %d.\n', dsize, d(i), s(i));
+            if v
+                warning('Negative inventory for size %d driver %d stop %d.\n', dsize, d(i), s(i));
+            end
 			is_valid = false;
 		end
 		
 		num_dumpsters = sum(inventories(yard_idx, :));
 		cap = c.yards(yard_idx).capacity;
 		if num_dumpsters > cap
-			warning('Staging area over its capacity of %d for driver %d at stop %d.\n', cap, d(i), s(i));
+            if v
+                warning('Staging area over its capacity of %d for driver %d at stop %d.\n', cap, d(i), s(i));
+            end
 			is_valid = false;
 		end
 	end

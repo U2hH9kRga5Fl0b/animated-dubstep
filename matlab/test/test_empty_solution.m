@@ -8,5 +8,5 @@ sol=-ones(c.number_of_drivers, c.number_of_actions); % don't visit any requests
 assert(feasible, 'The empty solution is always valid!');
 assert(num_serviced == 0, 'No requests were serviced!');
 assert(fees == 0, 'No fees, because there were no landfills visited.');
-assert(isequal(times, zeros(1, c.number_of_drivers)), 'No time was spent.');
-assert(isequal(times, zeros(1, c.number_of_drivers)), 'No distance was covered.');
+assert(isequal(times, zeros(c.number_of_drivers, 1)), 'No time was spent.');
+assert(isequal(times, zeros(c.number_of_drivers, 1)), 'No distance was covered.');

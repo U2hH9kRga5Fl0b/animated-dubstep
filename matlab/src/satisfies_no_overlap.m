@@ -3,7 +3,7 @@
 
 %author Matt
 
-function [is_valid] = satisfies_no_overlap(c, sol)
+function [is_valid] = satisfies_no_overlap(c, sol, v)
 
 is_valid = true;
 error_flag = ' ';
@@ -14,18 +14,17 @@ error_flag = ' ';
 
 % We can probably get around depending on the actions being in a certain order if we just skip the actions we don't care about.
 
-% for n = (4 * c.number_of_landfills + 8 * c.number_of_staging_areas + 1):c.number_of_actions
+% for n = (4 * c.number_of_landfills + 8 * c.number_of_staging_areas + 1):size(sol,2)
 for n = 1:c.number_of_actions
-
     op = c.actions(n).operation;
     if op == 'U' || op == 'S' || op == 'E'
-	continue;
+        continue;
     end
     
     count = 0; %The number of times we see a particular action n in the matrix
     
     for i = 1:c.number_of_drivers
-        for j = 1:length(sol(1, :))  % This could just be size(sol, 2)  (or even just c.num_of_actions)
+        for j = 1:size(sol, 2)
             if sol(i, j) < 0
                 continue;
             end
@@ -36,8 +35,10 @@ for n = 1:c.number_of_actions
             
             if ( count == 2 )
                 error_flag = strcat('Stop #', int2str(n), ' is visited more than once - this is a customer request. ', ...
-				'   The second time is by driver #', int2str(i), ' at stop #', int2str(j), '.');
-                warning(error_flag);
+                    '   The second time is by driver #', int2str(i), ' at stop #', int2str(j), '.');
+                if v
+                    warning(error_flag);
+                end
                 is_valid = false;
                 count = count + 1;
             end

@@ -2,9 +2,9 @@
 rng('shuffle')
 
 % Set up the path
-addpath('.\example');
-addpath('.\export');
-addpath('.\objects');
-addpath('.\src');
-addpath('.\test');
+addpath(['.' filesep 'example']);
+addpath(['.' filesep 'export']);
+addpath(['.' filesep 'objects']);
+addpath(['.' filesep 'src']);
+addpath(['.' filesep 'test']);
 
