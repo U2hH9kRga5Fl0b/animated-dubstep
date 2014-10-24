@@ -53,6 +53,6 @@ c = generate(50,4,3, 3);
 
 
 
-% This is not working yet, but what happens when we try to simulate a solution?
+% What happens when we try to simulate a solution?
 simulate(c, generate_rand_solution(c));
 
