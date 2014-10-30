@@ -72,7 +72,7 @@ for i = (c.number_of_staging_areas + c.number_of_landfills + 1):c.number_of_loca
 end
 
 %List the first yard
-loc = c.locs(c.yards(c.start_location).location, :);
+loc = c.locs(c.start_location, :);
 text(loc(1, 1), loc(1, 2), 0,...
     '(Start) #1', 'VerticalAlignment', 'bottom', 'Color', 'green');
 

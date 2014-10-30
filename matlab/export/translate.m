@@ -5,33 +5,6 @@
 function [c] = translate(dirname)
 
 
-% Questions for the UI team:
-
-% High priority:
-%	Split up output3.txt to also have an output4.txt
-%	I don't see any information about truck types/number of trucks.
-%	Missing last column of staging areas?
-% Medium priority:
-%	No addresses for landfills/staging areas.
-%	Landfills do not have a location index?
-%		(assuming they are just in the same order as that first sheet)
-%			further assuming the order of that first sheet :)
-% Low priority:
-%	Requests are not same time units as wait times (just assume you have to multiply the wait times by 60?)
-%	Should be ',' instead of '\t'?
-%
-% Other:
-%  I am assuming the locations for the staging areas aren't meant to be
-%      correct right now...
-%
-%
-% TODO:
-%	The landfill wait times are not set properly
-
-
-
-% The data in the examples doesn't actually give locations
-
 
 file1 = [dirname filesep 'output1.txt'];
 file2 = [dirname filesep 'output2.txt'];
@@ -267,8 +240,8 @@ while ischar(tline)
     assert(line + L + Y == str2num(comps{1}), 'Requests not in the order we expected.');
     
     c.addresses = { c.addresses{:} comps{2}};
-	%[c.locs(line + Y + L,:), ~] = address_to_location(comps{2}, true);
-    c.locs(line + Y + L,:) = [-1 -1];
+	[c.locs(line + Y + L,:), ~] = address_to_location(comps{2}, true);
+    %c.locs(line + Y + L,:) = [-1 -1];
     c.actions(next_action_index).in_size = str2num(comps{3});
     c.actions(next_action_index).out_size = str2num(comps{4});
     
