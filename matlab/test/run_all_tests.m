@@ -11,7 +11,7 @@ test_solution_dimensions
 
 % In progress
 test_negative_inventory
-test_no_requests_but_mach_traffic
+%test_no_requests_but_mach_traffic
 test_starting_location_is_staging_area
 test_weird_arguments
 

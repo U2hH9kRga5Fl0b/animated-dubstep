@@ -12,7 +12,6 @@ if nargin < 4
 end
 if nargin < 3
     v = true;
-else 
 end
 
 times = [];
@@ -21,7 +20,7 @@ num_serviced = [];
 fees = [];
 
 feasible = satisfies_argument_types(c, sol, v);
-if ~feasible && ~checkall
+if ~feasible
     return;
 end
 

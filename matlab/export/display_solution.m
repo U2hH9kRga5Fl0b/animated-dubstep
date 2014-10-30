@@ -14,7 +14,6 @@ colors = rand(c.number_of_drivers, 3);
 for d=1:c.number_of_drivers
     prev = c.locs(c.start_location, :);
     
-    
     for s=1:size(sol, 2)
         if sol(d,s) < 0
             break;

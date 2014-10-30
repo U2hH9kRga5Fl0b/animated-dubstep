@@ -2,7 +2,7 @@
 
 c=generate_city(50, 2, 2, 2);
 sol=-ones(c.number_of_drivers, c.number_of_actions); % don't visit any requests
-[feasible, times, distances, num_serviced, fees] = simulate(c, sol);
+[feasible, times, distances, num_serviced, fees] = simulate(c, sol, false);
 
 % Verify some of the obvious facts about the empty solution...
 assert(feasible, 'The empty solution is always valid!');

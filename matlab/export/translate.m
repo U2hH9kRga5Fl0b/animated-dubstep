@@ -5,33 +5,16 @@
 function [c] = translate(dirname)
 
 
-% Questions for the UI team:
+% Questions for the UI team.
 
 % High priority:
 %	Split up output3.txt to also have an output4.txt
 %	I don't see any information about truck types/number of trucks.
-%	Missing last column of staging areas?
 % Medium priority:
 %	No addresses for landfills/staging areas.
-%	Landfills do not have a location index?
-%		(assuming they are just in the same order as that first sheet)
-%			further assuming the order of that first sheet :)
 % Low priority:
-%	Requests are not same time units as wait times (just assume you have to multiply the wait times by 60?)
-%	Should be ',' instead of '\t'?
+%	distacnes are not same time units as wait times (just assume you have to multiply the wait times by 60?)
 %
-% Other:
-%  I am assuming the locations for the staging areas aren't meant to be
-%      correct right now...
-%
-%
-% TODO:
-%	The landfill wait times are not set properly
-
-
-
-% The data in the examples doesn't actually give locations
-
 
 file1 = [dirname filesep 'output1.txt'];
 file2 = [dirname filesep 'output2.txt'];
@@ -60,8 +43,8 @@ c.number_of_drivers = D;
 c.number_of_landfills = L;
 c.start_location = L + 1; % It looks like the landfills come before the staging areas.
 
-c.max_time = 60 * 60 * 24; % Seconds in a day- should it be a 12 hour day?
-c.truck_types = cast(ntrucks * rand(1, D) , 'int32'); % Maybe these shouldn't be random
+c.max_time = 60 * 60 * 14; % Seconds in a day- should it be a 12 hour day?
+c.truck_types = [ 1 1 2 2 2 2 2 2 3 3];
 
 
 yards_wait_time = 10 * 60; % ten minutes
@@ -69,7 +52,8 @@ requests_wait_time = 10 * 60; % ten minutes
 
 
 for i=1:Y+L
-	c.locs(i,:) = [-1 -1];
+    % This is Bailey, CO.
+	c.locs(i,:) = [39.4105578 -105.4794795];
 end
 
 
@@ -87,16 +71,16 @@ fgetl(fid); % ignore the first line
 tline=fgetl(fid);
 
 while ischar(tline)
-    [comps, len] = strsplit(tline, ',');
+    [comps, len] = strsplit(tline, '\t');
     
     if size(len, 2) + 1 ~= 4
-        warning('Line %d output1 has the wrong number of columns!\nline=%s', line, tline);
+        warning('Line %d output1 has the wrong number of columns!\nline=%s', line+1, tline);
         line = line + 1;
         tline = fgetl(fid);
         continue;
     end
     if strfind(tline, '#VALUE!')
-        warning('Line %d of output1.txt has a NAN. This will be 0.', line);
+        warning('Line %d of output1.txt has a NAN. This will be distance 0.', line+1);
         line = line + 1;
         tline = fgetl(fid);
         continue;
@@ -127,9 +111,12 @@ while ischar(tline)
 end
 
 
-asym = c.distances - c.distances';
-asym = sqrt(sum(sum(asym .* asym)));
-% asym
+asymmetry = c.distances - c.distances';
+asymmetry = sqrt(sum(sum(asymmetry .* asymmetry)));
+% asymmetry
+
+
+
 
 
 c.location_to_landfill = cast(zeros(1, m), 'int32');
@@ -152,15 +139,11 @@ end
 fgetl(fid); % ignore the first line
 tline=fgetl(fid);
 while ischar(tline)
-    comps = strsplit(tline, ',');
-    
-    % This is an oddity...
-    assert(str2num(comps{1}) == line, 'Landfills are not in their expected order');
-    
+    comps = strsplit(tline, '\t');
     % Landfill,Wait time,Fee
-    c.landfills(line).fee = str2num(comps{3});
-    c.landfills(line).location = line; % Don't know what goes here...
+    c.landfills(line).location = str2num(comps{1});
     wait = str2num(comps{2}) * 60;
+    c.landfills(line).fee = str2num(comps{3});
     
     for j = 1:ndumpsters
         c.actions(next_action_index).operation   = 'E';
@@ -175,7 +158,7 @@ while ischar(tline)
         next_action_index = next_action_index + 1;
     end
     
-    c.addresses = { c.addresses{:} 'no addresses for landfills'};
+    c.addresses = [ c.addresses {'no addresses for landfills'} ];
     c.location_to_landfill(c.landfills(line).location) = line;
     line = line + 1;
     tline = fgetl(fid);
@@ -192,32 +175,25 @@ end
 fgetl(fid); % ignore the first line
 tline=fgetl(fid);
 while ischar(tline)
-    [comps, len] = strsplit(tline, ',');
-    if size(len, 2) + 1 ~= 7
+    [comps, len] = strsplit(tline, '\t');
+    if size(len, 2) + 1 ~= 6
         warning('Line %d of output3.txt has the wrong number of columns!\nline=%s', line, tline);
         line = line + 1;
         tline = fgetl(fid);
         continue;
     end
     
-    % Storage,location,Capacity,6,9,12,16
-    assert(L + line == str2num(comps{1}), 'Yards not in the order they were expected.');
-    c.addresses = { c.addresses{:} 'no address for staging areas'};
+    % Storage location,Capacity,6,9,12,16
+    c.addresses = [ c.addresses {'no address for staging areas'} ];
     
     
-    c.yards(line).location = str2num(comps{2});
-    % For the exapmle data, it looks like it should be this:
-    % c.yards(line).location = line + L;
-    
-    
-    
-    c.yards(line).capacity = str2num(comps{3});
-    
+    c.yards(line).location = str2num(comps{1});
+    c.yards(line).capacity = str2num(comps{2});
     c.yards(line).inventory = [
+                str2num(comps{3}) ...
                 str2num(comps{4}) ...
                 str2num(comps{5}) ...
-                str2num(comps{6}) ...
-                str2num(comps{7}) ];
+                str2num(comps{6}) ];
     
     for j = 1:ndumpsters
         c.actions(next_action_index).operation   = 'S';
@@ -259,16 +235,13 @@ fgetl(fid); % ignore the first line
 tline=fgetl(fid);
 while ischar(tline)
     % Index,address,In,Out,Small,Not Small,Time Window
-	comps = strsplit(tline, ',');
-    
-    
+	comps = strsplit(tline, '\t');
     
     c.actions(next_action_index).location = str2num(comps{1});
     assert(line + L + Y == str2num(comps{1}), 'Requests not in the order we expected.');
     
     c.addresses = { c.addresses{:} comps{2}};
-	%[c.locs(line + Y + L,:), ~] = address_to_location(comps{2}, true);
-    c.locs(line + Y + L,:) = [-1 -1];
+	[c.locs(line + Y + L,:), ~] = address_to_location(comps{2}, true);
     c.actions(next_action_index).in_size = str2num(comps{3});
     c.actions(next_action_index).out_size = str2num(comps{4});
     

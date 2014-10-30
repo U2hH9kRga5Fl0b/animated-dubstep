@@ -11,7 +11,7 @@ distances = zeros(1, c.number_of_drivers);
 
 
 for x=1:c.number_of_drivers
-    if sol(x,1) < 0
+    if size(sol, 2) < 1 || sol(x,1) < 0
         continue
     end
     

@@ -10,7 +10,7 @@ function [is_valid] = satisfies_starts_with_no_dumpster(c, sol, v)
 is_valid = true;
 
 for d = 1:c.number_of_drivers
-    if sol(d,1) < 0
+    if size(sol, 2) < 1 || sol(d,1) < 0
         continue;
     end
     % First operation for each driver
