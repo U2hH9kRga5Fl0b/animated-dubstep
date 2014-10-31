@@ -15,7 +15,6 @@ function [c] = translate(dirname)
 % Low priority:
 %	distacnes are not same time units as wait times (just assume you have to multiply the wait times by 60?)
 %
-
 file1 = [dirname filesep 'output1.txt'];
 file2 = [dirname filesep 'output2.txt'];
 file3 = [dirname filesep 'output3.txt'];
@@ -242,6 +241,7 @@ while ischar(tline)
     
     c.addresses = { c.addresses{:} comps{2}};
 	[c.locs(line + Y + L,:), ~] = address_to_location(comps{2}, true);
+    
     c.actions(next_action_index).in_size = str2num(comps{3});
     c.actions(next_action_index).out_size = str2num(comps{4});
     
