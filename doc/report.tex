@@ -17,22 +17,87 @@
 \abstract{This abstract says that we built a simulator}
 
 \section{Introduction}
+
+The Simulation Team's goals were to produce a reasonably efficient way to test solutions given by the other teams who were developing mathematicals models to solve Sam's Hauling's delivery scheduling.  We met our goals on time and created a software package that is not only robust but is capable of simulating many different situations and occurrences.
+
+(NEED MORE)
+
+
+
 \subsection{Problem description}
+
+Sam’s Hauling Inc. provides a small to medium sized dumpster rental service to customers in the Denver Metro Area.  They first deliver these dumpsters, or containers, to customers who fill them. Then Sam’s Hauling must return to collect the full dumpsters and take it to a dump for disposal. Therefore, drivers must constantly be delivering new containers, picking up full containers, and dropping off trash at dumps.  There are also staging areas where drivers begin their day, and where empty dumpsters are stored. These have capacities and initial inventories that must also be considered.  Currently, they schedule their drivers by hand, and are looking for a new method to optimally schedule their pickup and delivery routes.
+
 \subsection{Overview of our role in the problem}
+
+We created three pieces of software, using MATLAB, for other groups to use in testing their solutions:  1) A city generator that will create random stops, dumps, and staging areas with which others can experiment, 2) a simulation function that will simulate how well a solution satisfies several of these requests, and output its efficiency based on various metrics, and finally 3) a translate function that takes data from the User Interface team and transforms it into MATLAB.  These three pieces of software have been used by the other teams in testing their proposed solutions.  Our goal was to provide an objective means by which others can efficiently test their proposed solutions, compare feasibility and optimality of said solutions, and give a good estimate of the sensitivity of each solution to changes - and we believe that we have met our goals.
+
+As a group, our roles were diverse and varied; we all contributed to developing our software package in various aspects including coding, feature implementation, interface development, and style.  Individually, we all filled different roles in the end:
+
+Trever Hallock
+	Coding (shared with Matthew Stanley)
+	Reporting and documentation (shared with Tamlyn Harley)
+Tamlyn Harley
+	Testing and debugging the simulator function
+	Reporting and documentation (shared with Trever Hallock)
+Matthew Stanley
+	Coding (shared with Trever Hallock)
+	Team organization and scheduling
+Cody Zhang
+	Algorithm design and pseudocode
+	Testing and debugging the city generator
+
+Further features were developed as a team, and coded by Trever Hallock and Matthew Stanley; the final report was written by the entire team, and the testing of the finalized product and features were completed by Tamlyn Harley and Cody Zhang.
+
 \subsection{The value of the simulator}
+
+Our software simulates the existing vehicle routing problems, except it also took inventory constraints on the containers in each staging area into account.  It is a critical part of the solution because without the simulator, proposed solutions would not be as rigorously tested as they were. A working simulator was integral in allowing the others teams to test their proposed solutions and data to measure their efficiency and accuracy; without the simulator, this would have had to be done by hand.  Our plan was to create a working software package as early as possible for every group to begin using, and we met this goal. A working version of the simulator was provided to the class on 30 October 2014, giving the class more than a month to work with the software to test their solutions.
+
 \section{API functions}
+
+(NOT WRITTEN YET BECAUSE THIS TAKES A LOT OF MATHEMATICAL SYMBOLS)
+
 \section{Model}
+
+(NOT WRITTEN YET BECAUSE THIS TAKES A LOT OF MATHEMATICAL SYMBOLS)
+
 \subsection{Decisions}
 \subsection{Model Assumptions}
 \subsection{Parameters}
+
+(TALK ABOUT CITIES AND SOLUTION MATRICES?  TALK ABOUT TESTS AND ERROR OUTPUT? NOT SURE WHAT GOES HERE)
+
 \subsection{Objectives}
+
+As a team, our objective was to create a software package that could simulate solutions through routes and cities to output their efficiency using various metrics.  We did not set out with the goal of stating our opinion on whether these metrics were "good" or "bad," but instead simply reported the data to those using the software and allowed them the freedom to interpret the results independetly. 
+
+We also had the objective of making our software user friendly; part of this was to allow easy translation between Excel (what the User Interface team ended up using) and MATLAB (our chosen platform).  This was a necessary goal in bridging the gap between the two platforms, and without this the teams would have to manually translate the information - which would be hardly "user friendly."  In the same vein as user friendliness, we also set out with the goal of creating a tutorial / manual for the class to use so that they could better understand the features and capabilities of our simulator.
+
+
 \subsection{Constraints}
 \section{Simulator}
 \subsection{Performance}
 \subsection{Capabilities}
 \subsection{Failed attempts/Lessons learned}
+
+a) We initially created the simulator without the ability to have a driver wait without performing any action; this caused a problem because drivers were not able to wait for a time window to begin, and it caused errors in our simulator.  Additionally, we learned that each location must have multiple actions associated with them, as many things can be done at each location - an assumption we had not initially considered.
+
+b) Some drivers did not have the same number of actions assigned to them, even if they took the same amount of time or longer than a driver with more actions.  We learned that less stops did not necessarily mean less productivity or efficiency.
+
+c) When first creating a solution matrix, our assumption was that the matrix would always be size DxN, where D was the number of drivers in the city and N was the number of actions possible in the city.  This turned out to be false because drivers could repeat actions, meaning that the matrix itself needed to be dynamic.
+
+d) ??
+
+(MORE NEEDS TO GO IN THIS SECTION)
+
 \section{Correspondence to real problems}
+
+Our simulator tries to replicate real life cities and routes in which a driver or multiple drivers drops off and picks up dumpsters; therefore, we have tried to make this as close to life as possible, while keeping it simple enough to use.  It is our belief then that this corresponds directly to any real world problem that Sam's Hauling might encounter, and any variance to the real world outcome is an error in the software but not an error in the design or theory of our project.
+
+
 \section{Conclusion}
+
+(NOT WRITTEN UNTIL THE REST OF THE DOCUMENT IS FINALIZED)
 
 \end{document}
 
