@@ -7,15 +7,15 @@ assert(c.number_of_landfills == 4, 'Wrong number of landfills');
 assert(c.number_of_staging_areas == 4, 'Wrong number of landfills');
 
 
-%Storage,location,Capacity,6,9,12,16
-%5,40,5,9,6,3,1
-%6,50,7,7,12,5,1
-%7,50,6,10,1,2,1
-%8,70,10,3,5,0,1
+%Storage location,Capacity,6,9,12,16
+%5,40,5,9,6,3
+%6,50,7,7,12,5
+%7,50,6,10,1,2
+%8,70,10,3,5,0
 
-assert(c.yards(2).capacity == 7, 'This made the wrong capacity for staging area 2');
-assert(c.yards(2).location == 50, 'This made the wrong location for staging area 2');
-assert(c.yards(2).inventory(2) == 12, 'This made the wrong location for staging area 2');
+assert(c.yards(2).capacity == 50, 'This made the wrong capacity for staging area 2');
+assert(c.yards(2).location == 6, 'This made the wrong location for staging area 2');
+assert(c.yards(2).inventory(2) == 7, 'This made the wrong number of size 9 dumpsters for staging area 2');
 
 
 

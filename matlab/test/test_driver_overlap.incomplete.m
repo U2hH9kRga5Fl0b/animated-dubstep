@@ -12,7 +12,7 @@ for i = 1:c.number_of_actions
 end
 sol(1,1) = a;
 sol(1,2) = a;
-[feasible, times, distances, num_serviced, fees] = simulate(c, sol);
+[feasible, times, distances, num_serviced, fees] = simulate(c, sol, false);
 
 % Verify some of the obvious facts about the empty solution...
 assert(feasible, 'The driver visited a stop more than once!');

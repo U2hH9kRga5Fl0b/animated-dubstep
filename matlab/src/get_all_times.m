@@ -13,7 +13,7 @@ times = -ones(size(sol));
 
 for d=1:c.number_of_drivers
     % If driver d doesn't perform any actions.
-    if sol(d,1) < 0
+    if size(sol, 2) < 1 || sol(d,1) < 0
        continue
     end
     

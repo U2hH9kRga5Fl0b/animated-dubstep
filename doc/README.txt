@@ -1,5 +1,4 @@
-
-This code needs some sort of tutorial.
+The Manual.docx is a tutorial about how to use the simulator.
 
 
 First of all, in matlab go to the 'matlab' folder.

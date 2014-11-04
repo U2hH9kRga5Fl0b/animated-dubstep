@@ -1,3 +1,3 @@
 % about as big as we can go...
 c=generate_city(5, 2, 2, 2);
-assert(simulate(c, generate_solution(c)), 'generate_solution should generate a valid solution.');
+assert(simulate(c, generate_solution(c), false), 'generate_solution should generate a valid solution.');

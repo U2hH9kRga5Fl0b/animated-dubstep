@@ -5,23 +5,23 @@
 
 % TODO: this should return the number of dumpsters at each staging area.
 
-function [feasible, times, distances, num_serviced, fees] = simulate(c, sol, v, checkall)
+function [feasible, times, distances, num_serviced, fees, invs] = simulate(c, sol, v, checkall)
 
 if nargin < 4
 	checkall = true;
 end
 if nargin < 3
     v = true;
-else 
 end
 
 times = [];
 distances = [];
 num_serviced = [];
 fees = [];
+invs = [];
 
 feasible = satisfies_argument_types(c, sol, v);
-if ~feasible && ~checkall
+if ~feasible
     return;
 end
 

@@ -1,6 +1,6 @@
 c = get_default_test_city();
 sol = [ 3 2 1 -1  ; -1 -1 -1 -1];
-[feasible, times, distances, num_serviced, fees] = simulate(c, sol);
+[feasible, times, distances, num_serviced, fees] = simulate(c, sol, false);
 assert(feasible, 'This is a feasible solution');
 
 % 1->3 + 3->2 + 2->1 + wait(3) + wait(2) + wait(1)
