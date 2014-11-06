@@ -91,11 +91,17 @@ Our software simulates the existing vehicle routing problems, except it also too
 \subsection{Capabilities}
 \subsection{Failed attempts/Lessons learned}
 
-a) We initially created the simulator without the ability to have a driver wait without performing any action; this caused a problem because drivers were not able to wait for a time window to begin, and it caused errors in our simulator.  Additionally, we learned that each location must have multiple actions associated with them, as many things can be done at each location - an assumption we had not initially considered.
+a) We initially created the simulator without the ability to have a driver wait without performing any action; this caused a problem because drivers were not able to wait for a time window to begin.  
+
+
+
+
+
+Additionally, we learned that each location must have multiple actions associated with them, as many things can be done at each location - an assumption we had not initially considered.
 
 b) Some drivers did not have the same number of actions assigned to them, even if they took the same amount of time or longer than a driver with more actions.  We learned that less stops did not necessarily mean less productivity or efficiency.
 
-c) When first creating a solution matrix, our assumption was that the matrix would always be size DxN, where D was the number of drivers in the city and N was the number of actions possible in the city.  This turned out to be false because drivers could repeat actions, meaning that the matrix itself needed to be dynamic.
+c) When first creating a solution matrix, our assumption was that the matrix would always be size DxN, where D was the number of drivers in the city and N was the number of actions possible in the city.  This turned out to be false because drivers could repeat actions, meaning that the matrix dimenions could not be determined ahead of time.
 
 d) ??
 
