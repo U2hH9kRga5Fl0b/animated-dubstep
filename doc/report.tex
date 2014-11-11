@@ -22,10 +22,16 @@
 
 \maketitle
 
-\abstract{This abstract says that we built a kick-ass simulator.}
-
-************************ NEEDS WORK ********************************
-
+\abstract{
+Simulation is an integral part of any mathematical modeling, especially when solving real-world problems.
+Without a standard process to simulate solutions, those designing and implementing models would be unable to verify their efficacy.
+Sam's Hauling requires an efficient method to schedule their drivers to service customer requests.
+Currently this is done by hand, and our job was to assist other teams in creating algorithms to accomplish this task by simulating their results.
+We developed a MATLAB model that took in a city object and a solution matrix to output the efficiency of said solution based on multiple metrics.
+Also, we worked with the User Interface Team to translate between their Excel-based output and our MATLAB model.
+Finally, we worked to find and simulate more subtle solution characteristics than what were explored by the other teams.
+We produced a software package that was able to meet our goals and simulate the models given by the other teams involved.
+}
 
 \clearpage
 \tableofcontents
@@ -36,16 +42,6 @@
 
 The Simulation Team's goals were to produce a reasonably efficient way to test solutions given by the other teams who were developing mathematicals models to solve Sam's Hauling's delivery scheduling.
 We met our goals on time and created a software package that is not only robust but is capable of simulating many different situations and occurrences.
-
-
-We claim it is robust.
-For me, software robustness can only be claimed when there is a large set of well written tests for it.
-If we want to convince the reader that our simulator works, we should finish writing those tests :)
-
-
-************************ NEEDS WORK ********************************
-
-
 
 \subsection{Problem description}
 
@@ -97,7 +93,7 @@ As a group, our roles were diverse and varied; we all contributed to developing 
 Further features were developed as a team, and coded by Trever Hallock and Matthew Stanley; the final report was written by the entire team, and the testing of the finalized product and features were completed by Tamlyn Harley and Cody Zhang.
 
 
-\section{Goals}
+\subsection{Goals}
 
 As a team, our objective was to create a software package that could simulate solutions through routes and cities to output their efficiency using various metrics.  We did not set out with the goal of stating our opinion on whether these metrics were "good" or "bad," but instead simply reported the data to those using the software and allowed them the freedom to interpret the results independetly. 
 
@@ -115,15 +111,198 @@ A working version of the simulator was provided to the class on 30 October 2014,
 
 Additionally, we hope that in the time remaining we can use the simulator gain a deeper understandning of the problem; test different assumptions made in the class, like constant drive times; be able to test solution robustness to changes in requests; and, possibly, even create an iterated solution method that attempts to solve the entire problem.
 
-\section{API functions}
+\section{MATLAB Model}
 
-************************ NEEDS WORK ********************************
+There are many parts to the model that we have created, as detailed below.
 
-(NOT WRITTEN YET BECAUSE THIS TAKES A LOT OF MATHEMATICAL SYMBOLS. This will likely have large portions copied from the tutorial.)
+\subsection {MATLAB Object Model}
+
+
+\subsubsection{City Representation}
+Cities are objects that store multiple pieces of information. 
+The city stores all of the data about drive times, stops, customer requests, landfills, staging areas, trucks, etc. 
+It is an entire set of data that makes up the problem statement. 
+
+
+\paragraph{Actions}
+A city contains \emph{actions}, also called \emph{stops}.
+There are multiple actions for any city.
+An action is simply something a driver can do.
+An action has several main parts:
+
+\begin{description}
+\item[The Operation ] \hfill \\
+ This can be P (pickup), D (dropoff), R (replace), S (stage), U (unstage), or E (empty).
+\item[The In-size   ] \hfill \\
+ This is the size of the dumpster that is being brought to the action or stop, as a numerical value between of 0, 6, 9, 12, or 16.
+The 0 represents no dumpster and the others represent the four sizes of containers we are dealing with.
+\item[The Out-size  ] \hfill \\
+ This is the same thing as in-size, but it is what size of dumpster the driver is supposed to leave with.
+\item[The Start-time] \hfill \\
+ This is the time, in seconds, when this action can start being performed; for example, if the start-time is 10,000, this means that 10,000 seconds must elapse during the simulation before this action can be performed.
+\item[The Stop-time ] \hfill \\
+ This is the time, in seconds, when an action must be performed by; together with start-time, these model time window constraints.
+\item[The Wait-time ] \hfill \\
+This is the amount of time it takes to actually complete the action (note that this is different from the travel time it takes to get to the location, which is modeled in a different place).
+\item[The Location  ] \hfill \\
+This is where the action is actually located; it is an index into the array of locations that we have, telling us which location has this particular action.
+ It is also an index into the matrix of distances and durations between locations.
+\end{description}
+
+
+\paragraph{Example}
+
+Different locations have different kinds of actions.
+For example, staging areas have 8 actions each, as shown in this table:
+
+\vspace{5mm}
+\begin{tabular}{ | c | c | c | c |}
+STAGING AREA & Operation & In-size & Out-size \\
+\hline ACTION 1 & STAGE & 6 &  0 \\
+ACTION 2 & STAGE & 9 &  0 \\
+ACTION 3 & STAGE & 12 &  0 \\
+ACTION 4 & STAGE & 16 &  0 \\
+ACTION 5 & UNSTAGE & 0 &  6 \\
+ACTION 6 & UNSTAGE & 0 &  9 \\
+ACTION 7 & UNSTAGE & 0 &  12 \\
+ACTION 8 & UNSTAGE & 0 &  16. \\
+\end{tabular}
+
+\vspace{5mm}
+
+
+
+If you want to unstage (pickup) a size 12 dumpster, you must start with an empty truck and leave with a size 12 dumpster.
+Thus, you would use the seventh action, which means your in-size is 0 and your out-size is 12.  
+Having multiple actions is needed because only giving a location is ambiguous when a truck travels between staging areas.
+
+Similarly, landfills have four actions each, one for each kind of dumpster you will be bringing there to empty.  
+Customer requests only have one action each, as they will always have a predetermined in-size and out-size.
+Now that we’ve covered cities, let us look at solutions.
+
+
+\subsubsection{Solution Representation}
+
+The the solution is represented by a matrix.
+Each row represents a driver's route and each corresponding column entry a driver's row is what that driver will do in order.
+A negative one means that the driver does nothing: he is at the end of his route.
+The following is a solution matrix.
+
+\vspace{5mm}
+
+\[
+\left(
+\begin{array}{  c  c  c  c  c  c  c }
+2 & 4 & 19 & 22 & -1 & -1 & -1  \\
+10 & 17 & 19 & 44 & 11 & 13 & 5 \\
+6 & 19 & -1 & -1 & -1 & -1 & -1  \\
+\end{array} \right)
+\]
+
+\vspace{5mm}
+
+
+Each row is a driver; thus, this city has three drivers.
+Driver one performs action 2, then 4, then 19, then 22, and then he is done for the day.
+Similarly, driver three performs actions 6 and 19, in that order, then finishes his day.  
+Driver two is the busiest, obviously, but his actions are just as easily read.
+
+As you can see, it was necessary to encode what kinds of dumpsters the driver was dropping off, picking up, etc. with the in-size and out-size, so that this matrix would be feasible. 
+This encoding of the solution into a matrix is why there are so many actions associated with staging areas and landfills.
+As an example, imagine that stop 19 is a staging area. 
+Because of how the actions are structured, given any city, we will know exactly what kind of action the driver is performing at that staging area. 
+Actions 18-25 may all be at that same staging area, but they all mean different things.
+
+
+\subsection{Route Simulation}
+
+\begin{verbatim}
+   function [feasible, times, distances, num_serviced, fees, invs] 
+      = simulate(c, sol, v, checkall)
+\end{verbatim}
+
+\paragraph{Parameters}
+\begin{description}
+\item[c] \hfill \\ The city object
+\item[sol] \hfill \\ The solution matrix
+\item[v] (Optional)\hfill \\   True if errors should be printed
+\item[checkall] (Optional)\hfill \\  True if all constraints should be checked, even when one is violated
+\end{description}
+
+\paragraph{Return Values}
+The simulate function takes in a city and a solution matrix as arguments, and outputs these metrics:
+
+\begin{description}
+\item[Feasible ]\hfill \\  False if the solution encountered an error that makes it a non-viable solution; it returns true otherwise
+\item[Times ] \hfill \\ A vector containing all of the times it took each driver to complete his assigned route, based on the solution matrix given
+\item[Distances ] \hfill \\ A vector containing all of the distances traveled by each driver based on his assigned route
+\item[Number Serviced ] \hfill \\ How many of your customer requests were actually completed
+\item[Fees ] \hfill \\ How much in fees you accrued on this route, based on the costs of landfills
+\item[Inventories]\hfill \\  How many dumpsters remain at each staging area at the end of the day
+\end{description}
+
+Some solutions will contain errors that the simulator will recognize as non-feasible solutions. 
+It will return the variable feasible = false if this is the case. 
+Many things will cause it to return infeasible.
+For example, if a driver visits a landfill followed by another landfill, this makes no sense and it will return infeasible.  
+Or, if a driver visits a staging area to get a size 6 dumpster, but that staging area has none in inventory, this will also return infeasible.
+If you want a detailed list of all the constraints refer to the matlab/src directory, or to the model in the next section.
+
+
+Unless instructed otherwise, the simulator will continue to run to the best of its ability when dealing with a non-viable solution.
+The errors it finds will be displayed in the main window of MATLAB.
+
+Our suite of functions also comes with a generate\_rand\_solution function that takes a city as an argument.
+However, beware, this random solution is rarely viable.
+
+
+
+\subsection{City Generation}
+
+\begin{verbatim}
+   function [c] = generate_city(R, L, Y, D)
+\end{verbatim}
+
+The function generate\_city(R, L, Y, D) generates a city at random, based on these arguments:
+
+\paragraph{Parameters}
+\begin{description}
+\item[R] The number of customer requests to be generated
+\item[L] The number of landfills to be generated
+\item[Y] The number of staging areas, or yards, to be generated
+\item[D] The number of drivers that work in that city
+\end{description}
+
+\paragraph{Return Value}
+\begin{description}
+\item[c] A randomly generated city
+\end{description}
+
+
+This function creates a random set of customer requests, landfills, staging areas, trucks, etc. for us to run a simulation on.  Everything is random, so that you can create a diverse set cities to run simulations through. 
+
+
+\subsection{City Translation}
+
+\begin{verbatim}
+   function [c] = translate(dirname)
+\end{verbatim}
+
+This function takes the output from the user interface team (who are working with Excel) and translates it into our city structure in MATLAB. 
+It also finds the coordinateness of the addresses, to plot the city. 
+
+For example, sample data given by the UI team on Canvas is also in our repository under /matlab/test/example\_ui\_data.
+If you want a city based on this data, you can simply enter the matlab command c = translate('test/example\_ui\_data'); This city will represent the data found in this city.
+Translate expects to see five files in the directory is given: output1.txt, output2.txt, output3.txt, output4.txt, and output5.txt.
+
+
+
+Because this uses a Google API to find a location from the address the UI team gives, you must be connected to the internet to run this.
 
 \section{Model}
 
-************************ NEEDS WORK ********************************
+(Needs to be integrated with previous section)
+
 
 We will describe the mathematical model that this simulator attempts to simulate.
 
@@ -148,6 +327,58 @@ This may or may not be a reasonable assumption.
 
 We were not sure if we should include actions to be performed at staging areas that allowed drivers to dropoff a container and pickup a container in the same action.
 We decided against this because this greatly increases the number of actions, solutions are required to first dropoff a dumpster and then pickup one up.
+
+
+
+\subsection{Model Decisions}
+
+
+\subsubsection{Cody's Idea}
+\subsubsection{Modelling Language}
+\subsubsection{Simulator output}
+
+Somthing about no over simplying output for other teams (sum of times vs vector of times).
+\begin{verbatim}
+
+with sum + numdrivers^2 * max
+driver costs: 
+	
+26259 26927 26691 25757 26812 26035 26599 26859 26848 26423 
+times: 
+	26259 26927 26691 25757 26812 26035 26599 26859 26848 26423 
+	sum of all times: 265210
+
+	max time: 26927
+	
+	
+with sum
+driver: 
+	
+    0     0     0 63056     0     0 24699     0 125832 41048 
+times: 
+	    0     0     0 63056     0     0 24699     0 125832 41048 
+	sum of all times: 254635
+
+	max time: 125832
+	
+	
+with sum + overtime
+driver: 
+	
+37924 37949 37922 38046 37941 37925 38064 37968 37942 37916 
+times: 
+	37924 37949 37922 38046 37941 37925 38064 37968 37942 37916 
+	sum of all times: 379597
+
+	max time: 38064
+
+\end{verbatim}
+
+
+
+\fbox{\includegraphics[width=6cm]{images/seed_0_sum.png}}
+\fbox{\includegraphics[width=6cm]{images/seed_0_max.png}}
+
 
 \subsection{Model Variables}
 
@@ -542,7 +773,15 @@ We learned that less stops did not necessarily mean less productivity or efficie
 When first creating a solution matrix, our assumption was that the matrix would always be size DxN, where D was the number of drivers in the city and N was the number of actions possible in the city. 
 This turned out to be false because drivers could repeat actions, meaning that the matrix dimenions could not be determined ahead of time.
 
+
 \subsubsection{Distribution of city parameters}
+
+Our simulator tries to replicate real life cities and routes in which a driver or multiple drivers drops off and picks up dumpsters;
+therefore, we have tried to make this as close to life as possible, while keeping it simple enough to use.
+It is our belief then that this corresponds directly to any real world problem that Sam's Hauling might encounter,
+and any variance to the real world outcome is an error in the software but not an error in the design or theory of our project.
+
+
 Originally, the simulator did not generate realistic cities.
 For example, the distribution of wait times did not match example data from Sam's Hauling.
 With sample data, we modified the generate\_city function so that the cities better represented real data.
@@ -553,17 +792,21 @@ An alternative way is to first simply come up with distriubtions of several impo
 Then, more drive times can be generated that follow the same mean, variance, or possibly skew of these distributions.
 
 
-(MORE NEEDS TO GO IN THIS SECTION)
 
-\section{Correspondence to real problems}
-
-Our simulator tries to replicate real life cities and routes in which a driver or multiple drivers drops off and picks up dumpsters;
-therefore, we have tried to make this as close to life as possible, while keeping it simple enough to use.
-It is our belief then that this corresponds directly to any real world problem that Sam's Hauling might encounter,
-and any variance to the real world outcome is an error in the software but not an error in the design or theory of our project.
+%There are some things currently not output by the UI team that are output by the generate_city function. 
+%An example is the location of each landfill or staging area. 
+%This may affect the simulator. 
 
 
-(IF THIS IS ALL WE ARE GOING TO SAY HERE, MAYBE WE SHOULD REMOVE IT.)
+\subsection{Simulator Correctness}
+
+
+%We claim it is robust.
+%For me, software robustness can only be claimed when there is a large set of well written tests for it.
+%If we want to convince the reader that our simulator works, we should finish writing those tests :)
+We will put comments about our testing here.
+
+
 
 \section{Robustness}
 
@@ -692,64 +935,6 @@ The differences might be bigger if we could actually search for robust solutions
 This means we might should take the maximum of differences in robustness, rather than average when determining the usefullness of this concept.
 
 
-\subsection{This goes farther up there.}
-
-
-\begin{verbatim}
-
-with sum + numdrivers^2 * max
-driver costs: 
-	
-26259 26927 26691 25757 26812 26035 26599 26859 26848 26423 
-times: 
-	26259 26927 26691 25757 26812 26035 26599 26859 26848 26423 
-	sum of all times: 265210
-
-	max time: 26927
-	
-	
-	
-	
-	
-	
-	
-	
-	
-with sum
-driver: 
-	
-    0     0     0 63056     0     0 24699     0 125832 41048 
-times: 
-	    0     0     0 63056     0     0 24699     0 125832 41048 
-	sum of all times: 254635
-
-	max time: 125832
-	
-
-	
-	
-	
-	
-	
-	
-with sum + overtime
-driver: 
-	
-37924 37949 37922 38046 37941 37925 38064 37968 37942 37916 
-times: 
-	37924 37949 37922 38046 37941 37925 38064 37968 37942 37916 
-	sum of all times: 379597
-
-	max time: 38064
-
-\end{verbatim}
-
-
-
-\fbox{\includegraphics[width=6cm]{images/seed_0_sum.png}}
-\fbox{\includegraphics[width=6cm]{images/seed_0_max.png}}
-
-
 \subsection{Changing Times}
 One of the assumptions made in the class was that drive times do not depend on the time of day.
 We are currently collecting drive times through different times of days, and hope to test if this assumption is valid or if simulation output changes drastically when we include dynamic drive times.
@@ -768,5 +953,8 @@ How important this is to solution times obviously depends on what the distributi
 \section{Conclusion}
 
 (NOT WRITTEN UNTIL THE REST OF THE DOCUMENT IS FINALIZED)
+
+
+(Could move rest of tutorial into an appendix)
 
 \end{document}
