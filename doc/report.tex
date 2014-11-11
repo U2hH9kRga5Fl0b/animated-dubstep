@@ -1,11 +1,13 @@
 \documentclass{article}
 
+
 \title{Report}
 
 \usepackage{graphicx}
 \makeatletter
 \newcommand{\verbatimfont}[1]{\renewcommand{\verbatim@font}{\ttfamily#1}}
 \makeatother
+
 
 \author{
 	Trever Hallock \and
@@ -32,6 +34,7 @@ We claim it is robust.
 For me, software robustness can only be claimed when there is a large set of well written tests for it.
 If we want to convince the reader that our simulator works, we should finish writing those tests :)
 
+
 (NEED MORE)
 
 
@@ -56,6 +59,7 @@ We created three pieces of software, using MATLAB, for other groups to use in te
 \end{itemize}
 
 These three pieces of software have been used by the other teams in testing their proposed solutions.  Our goal was to provide an objective means by which others can efficiently test their proposed solutions, compare feasibility and optimality of said solutions, and give a good estimate of the sensitivity of each solution to changes - and we believe that we have met our goals.
+
 
 As a group, our roles were diverse and varied; we all contributed to developing our software package in various aspects including coding, feature implementation, interface development, and style.  Individually, we all filled different roles in the end:
 
@@ -505,6 +509,7 @@ Its not now.
 
 
 \subsubsection{No way to express waiting}
+
 We initially created the simulator without the ability to have a driver wait without performing any action;
 this caused a problem because drivers were not able to wait for a time window to begin.  
 
@@ -745,8 +750,6 @@ Then the constraint on requests not being serviced multiple times would have to 
 If this means that solutions are much faster, and this is allowed by Sam's Hauling, then it would be a good idea to include this in the algorithm.
 We may add penalties to this based on the extra cost of dumping larger dumpsters.
 How important this is to solution times obviously depends on what the distribution of dumpster size requests are in the first place.
-
-
 
 \section{Conclusion}
 
