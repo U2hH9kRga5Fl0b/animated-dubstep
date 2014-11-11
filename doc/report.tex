@@ -24,6 +24,13 @@
 
 \abstract{This abstract says that we built a kick-ass simulator.}
 
+
+
+\clearpage
+\tableofcontents
+\clearpage
+
+
 \section{Introduction}
 
 The Simulation Team's goals were to produce a reasonably efficient way to test solutions given by the other teams who were developing mathematicals models to solve Sam's Hauling's delivery scheduling.
@@ -135,7 +142,7 @@ This may or may not be a reasonable assumption.
 We were not sure if we should include actions to be performed at staging areas that allowed drivers to dropoff a container and pickup a container in the same action.
 We decided against this because this greatly increases the number of actions, solutions are required to first dropoff a dumpster and then pickup one up.
 
-\subsection{Model Parameters}
+\subsection{Model Variables}
 
 First, we will define the variables used in the model.
 While giving the symbols and their dimensions, we will try to use the following convention for indices.
@@ -150,7 +157,7 @@ All times can be measured in seconds.
 
 
 
-\subsection{Parameters}
+\subsubsection{Parameters}
 \begin{tabular}{ l | l | l }
  Variable name                 &                                                                & Description                                                   \\
 \hline
@@ -192,7 +199,7 @@ All times can be measured in seconds.
 \end{tabular}
 
 
-\subsection{The City}
+\subsubsection{The City}
 \begin{tabular}{ l | l | l }
  Variable name                 &                                                                & Description                                                   \\
  \hline
@@ -253,7 +260,7 @@ Then, for each staging area there will be actions allowing a dumpster to come in
 Also, there will be an action coming in to each staging area with each dumpster size and leaving with no dumpster.
 That is, $n = R + (L + 2 Y) (|S| - 1)$.
 
-\section{Decision variables}
+\subsection{Decision variables}
 
 The solution to the problem will be given by a matrix with $D$ rows and an arbitrary number of columns.
 Each row $x_d, 1 \le d \le D$ will be a permutation vector of the stops to be performed by driver $d$ (followed by $-1$'s).
@@ -261,7 +268,7 @@ Let us name their lengths $r_d := length(x_d) \le n$.
 We will interpret the $l$-th element of $x_{d}$ (which is denoted $x_{d,l}$) as the $l$-th stop to be performed by truck $d$.
 For example, if $o_{x_{d,l}} =$ `S', then the $l$-th stop by driver $d$ is a staging operation at a storage yard.
 
-\section{Objectives}
+\subsection{Objectives}
 
 Let us make some of the following equations simpler with these definitions.
 Let $t(x,y) = t_{x,y}$, so we have fewer subscripts.
@@ -275,7 +282,7 @@ We will simulate this as a multi objective problem.
 In revision one, this will only include the number of requests serviced, the time taken to do so, the total distance covered, and the amount of fees accrued.
 We could use a lexicographic ordering to order these (If we have a maximum time).
 
-\subsection{Number of requests serviced}
+\subsubsection{Number of requests serviced}
 
 The total number of requests serviced is 
 %either
@@ -284,7 +291,7 @@ The total number of requests serviced is
 $$N = \sum_{d=1} ^D \sum_{j=1\atop o_j \in \{\mbox{`D'},\mbox{`P'}, \mbox{`R'}\}}^{r_d} 1.$$
 %depending on whether servicing a replace request counts as twice the number of requests serviced as a pickup or delivery.
 
-\subsection{Time taken to service requests}
+\subsubsection{Time taken to service requests}
 
 One way to model the total time could be
 $$ T_{total} = \max_{d=1} ^D \{ a(d, r_d) \} $$ which is the time of the longest route and would represent the amount of time before all routes were completed.
@@ -298,11 +305,11 @@ What the simulator will likely do is return an entire vector of time-costs assoc
 If we also include fuel costs (or driving distances) between different locations, then another output will be the total distance driven.
 Finally, if this is specifically fuel costs (and not driving distance) and we include the landfill fees, we could simply add the fees to driving costs and return it as an objective.
 
-\subsection{Distance Covered}
+\subsubsection{Distance Covered}
 This is given by
 $$\sum_{d=1}^D d(I, x_{d, 1}) + \sum_{j=1}^{l-1} d(l_{x_{d,j}},l_{x_{d,j+1}} ).$$
 
-\subsection{Landfill Fees}
+\subsubsection{Landfill Fees}
 This is given by
 
 \[
@@ -314,15 +321,15 @@ This is given by
 \]
 
 
-\subsection{Output Dumpster sizes}
+\subsubsection{Dumpster sizes}
 This is future work, and might be used to ensure that dumpsters are equally (or otherwise) spread out among staging areas at the end of the day.
 This could be used to ensure that dumpsters at staging areas are accessible for the next day.
 Also, it is mentioned in the problem description that some staging areas might not be allowed to have dumpsters overnight.
 Although we would need another parameter in the model to dictage which staging areas these are, that would likely make this objective be a constraint.
 
-\section {Constraints}
+\subsection {Constraints}
 
-\subsection{Permutations must not overlap}
+\subsubsection{Permutations must not overlap}
 We don't want to visit the same request twice, so for all $1 \le d, d' \le D$ and all $1 \le j, j' \le r_i$, at least one of the following $4$ statements must be true:
 
 \begin{tabular}{ l r  c  l }
@@ -332,13 +339,13 @@ We don't want to visit the same request twice, so for all $1 \le d, d' \le D$ an
 4: & $x_{d,j}$ & $\ne$ & $x_{d', j'}$ \\
 \end{tabular}
 
-\subsection{Time for each stop falls within windows}
+\subsubsection{Time for each stop falls within windows}
 For each $1 \le i \le D$ and each $1 \le k \le r_i$ we need
 $$ T^{begin}_{x_{i,k}} \le a(i, k) \le  T^{end}_{x_{i,k}}.$$
 
 If we include the $T_{max}$ variable, we will need to ensure that $a(d,r_d) \le T_{max}$ for all $1 \le d \le D$
 
-\subsection {Sizes match}
+\subsubsection {Sizes match}
 
 For all $1 \le d \le D$, and for all $1 \le j \le r_d - 1$, we have
 $$S^{out}_{x_{d,j}} = S^{in}_{x_{d,j+1}}.$$
@@ -352,7 +359,7 @@ We also assume that all trucks start out with no dumpsters.
 In the problem description, there is a statement that dumpsters larger than the one being requested can also be used.
 We have not incorporated this into our model yet.
 
-\subsection {Operations follow each other}
+\subsubsection {Operations follow each other}
 (Yes, this is needed! But wouldn't be if we instead used a dumpster state of full, or empty (which isn't the same as no dumpster) for each stop/action.
 Then we would just need a `truck state matches' constraint, which would be as simple as the `sizes match' constraint.)
 
@@ -371,12 +378,12 @@ For all $1 \le d \le D$, and for all $1 \le j \le r_i - 1$, we need that $follow
 
 Read this as operation in row $d$ can follow the operation in column $j$ if $follows(i,j) = $ T.
 
-\subsection{Constraints on Truck Types}
+\subsubsection{Constraints on Truck Types}
 
 For each $ 1 \le d \le D$ and each $1 \le j \le r_d $
 we need $$ c_{x_{d,j},t_{d}} = 1 .$$
 
-\subsection{Staging Area Capacities Met}
+\subsubsection{Staging Area Capacities Met}
 
 Let $b(d,t) $ ($b$ for bound) be the largest index $k$, $1 \le k \le r_i$ such that $a(d, k) < t$.
 In other words, this is the a index into the $d$-th truck's route that gives its last stop before time $t$ ($t \in R$, $0 \le t < \infty $).
@@ -391,11 +398,11 @@ This assumes that each dumpster takes up the same amount of space in the staging
 If not, we could use a weighted sum, where we replace the $\pm 1$ with a weight based on $s$
 (the coefficients would need to be another parameter to the model).
 
-\subsection{Each truck ends where it starts}
+\subsubsection{Each truck ends where it starts}
 There is a constraint that says each truck must stop at the staging area it starts at.
 That is, for all $1 \le d \le D$, we have $l_{x_{d, r_d}} = I$.
 
-\section{Example}
+\subsection{Example}
 
 %\subsection{TODO}
 %Add the variable names next to their descriptions.
@@ -406,7 +413,7 @@ That is, for all $1 \le d \le D$, we have $l_{x_{d, r_d}} = I$.
 This is an example city with $L = 1$, $Y = 1$, $R = 2$, $D = 2$, $S = \{ \mbox{9  }, \mbox{12   }, \mbox{16   }, \mbox{No Dumpster} \}$,
 $T = \{ \mbox {small}, \mbox{large}  \}$, $n=11$, $m=4$.
 
-\subsection{City}
+\subsubsection{City}
 Possible Stops:
 
 \begin{tabular} {c | c c c c c c c }
@@ -465,7 +472,7 @@ index     &   capacity & location \\
 $I = 6$.
 
 
-\subsection{Solution}
+\subsubsection{Solution}
 
 These following two are possible solutions, although the second doesn't end where it starts.
 1. $x_1 = ()$, $x_2 = ()$ (In this case, $r_1 = r_2 = 0$).
@@ -474,7 +481,7 @@ These following two are possible solutions, although the second doesn't end wher
 However, this solution is not feasible, because the sizes don't match in the last stop of the second truck:
 $x_1 = ()$, $x_2 = (6, 11, 4, 8)$ (In this case, $r_1 = 0$,$ r_2 = 4$).
 
-\subsection{Objectives}
+\subsubsection{Objective Values}
 
 The time for the first is $0$, which is also the number of requests serviced.
 The number of requests serviced in the second is $1$, and the time for the second truck $a(2, 4)$ is:
