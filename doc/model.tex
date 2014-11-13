@@ -1,23 +1,422 @@
 \documentclass{article}
 
 
-\title{Model to Simulate}
-\author{Group 4}
+\title{Report}
+
+\usepackage{graphicx}
+\makeatletter
+\newcommand{\verbatimfont}[1]{\renewcommand{\verbatim@font}{\ttfamily#1}}
+\makeatother
+
+
+\author{
+	Trever Hallock \and
+	Tamlyn Harley \and
+	Matthew Stanley \and
+	Cody Zhang
+}
 
 \begin{document}
+
+\verbatimfont{\small}%
+
 \maketitle
 
+\abstract{
+Simulation is an integral part of any mathematical modeling, especially when solving real-world problems.
+Without a standard process to simulate solutions, those designing and implementing models would be unable to verify their efficacy.
+Sam's Hauling requires an efficient method to schedule their drivers to service customer requests.
+Currently this is done by hand, and our job was to assist other teams in creating algorithms to accomplish this task by simulating their results.
+We developed a MATLAB model that took in a city object and a solution matrix to output the efficiency of said solution based on multiple metrics.
+Also, we worked with the User Interface Team to translate between their Excel-based output and our MATLAB model.
+Finally, we worked to find and simulate more subtle solution characteristics than what were explored by the other teams.
+We produced a software package that was able to meet our goals and simulate the models given by the other teams involved.
+}
 
-\section{Notes}
+\clearpage
+\tableofcontents
+\clearpage
 
-For this model,  actions (or stops) are any action or stop that could be performed, including all the information (like the dumpster size) that goes along with that action.
-For example, this could be a `request' which comes from a customer and can only be a deliver, pickup, or replace action.
-Otherwise it is an action at a staging area or landfill.
-(These last actions that aren't called requests.)
-For one staging area, there are likely several different actions (or stops) that could be made.
-A driver could pickup a dumpster or stage a dumpster which would be different \emph{actions} but would be at the same \emph{location}.
-This will become more clear when we define our variables.
 
+\section{Introduction}
+
+The Simulation Team's goals were to produce a reasonably efficient way to test solutions given by the other teams who were developing mathematical models to solve Sam's Hauling's delivery scheduling.
+We met our goals on time and created a software package that is not only robust but is capable of simulating many different situations and occurrences.
+
+\subsection{Problem description}
+
+Sam’s Hauling Inc. provides a small to medium sized dumpster rental service to customers in the Denver Metro Area.
+They first deliver these dumpsters, or containers, to customers who fill them. Then Sam’s Hauling must return to collect the full dumpsters and take it to a dump for disposal.
+Therefore, drivers must constantly be delivering new containers, picking up full containers, and dropping off trash at dumps.
+There are also staging areas where drivers begin their day, and where empty dumpsters are stored.
+These have capacities and initial inventories that must also be considered.
+Currently, they schedule their drivers by hand, and are looking for a new method to optimally schedule their pickup and delivery routes.
+
+\subsection{Overview of our role in the problem}
+
+We created three pieces of software, using MATLAB, for other groups to use in testing their solutions:
+
+\begin{itemize}
+\item A city generator that will create random stops, dumps, and staging areas with which others can experiment
+\item A simulation function that will simulate how well a solution satisfies several of these requests, and output its efficiency based on various metrics
+\item A translate function that takes data from the User Interface team and transforms it into MATLAB
+\end{itemize}
+
+These three pieces of software have been used by the other teams in testing their proposed solutions. 
+Our goal was to provide an objective means by which others can efficiently test their proposed solutions, compare feasibility and optimality of said solutions, and give a good estimate of the sensitivity of each solution to changes - and we believe that we have met our goals.
+
+
+As a group, our roles were diverse and varied; we all contributed to developing our software package in various aspects including coding, feature implementation, interface development, and style.  Individually, we all filled different roles in the end:
+
+\begin{itemize}
+	\item Trever Hallock
+	\begin{enumerate}
+		\item Coding (shared with Matthew Stanley)
+		\item Reporting and documentation (shared with Tamlyn Harley)
+	\end{enumerate}
+	\item Tamlyn Harley
+	\begin{enumerate}
+		\item Testing and debugging the simulator function
+		\item Reporting and documentation (shared with Trever Hallock)
+	\end{enumerate}
+	\item Matthew Stanley
+	\begin{enumerate}
+		\item Coding (shared with Trever Hallock)
+		\item Team organization and scheduling
+	\end{enumerate}
+	\item Cody Zhang
+	\begin{enumerate}
+		\item Algorithm design and pseudocode
+		\item Testing and debugging the city generator
+	\end{enumerate}
+\end{itemize}
+
+Further features were developed as a team, and coded by Trever Hallock and Matthew Stanley; the final report was written by the entire team, and the testing of the finalized product and features were completed by Tamlyn Harley and Cody Zhang.
+
+
+\subsection{Goals}
+
+As a team, our objective was to create a software package that could simulate solutions through routes and cities to output their efficiency using various metrics.
+We did not set out with the goal of stating our opinion on whether these metrics were "good" or "bad," but instead simply reported the data to those using the software and allowed them the freedom to interpret the results independently. 
+
+We also had the objective of making our software user friendly; part of this was to allow easy translation between Excel (what the User Interface team ended up using) and MATLAB (our chosen platform).  
+This was a necessary goal in bridging the gap between the two platforms, and without this the teams would have to manually translate the information - which would be hardly "user friendly." 
+In the same vein as user friendliness, we also set out with the goal of creating a tutorial / manual for the class to use so that they could better understand the features and capabilities of our simulator. 
+This tutorial was completed and presented to the class as a whole, and was available for download along with our simulator.
+
+
+\subsection{The Value of the Simulator}
+
+Our software simulates the existing vehicle routing problems, except it also took inventory constraints on the containers in each staging area into account. It is a critical part of the solution because without the simulator, proposed solutions would not be as rigorously tested as they were. 
+
+A working simulator was integral in allowing the others teams to test their proposed solutions and data to measure their efficiency and accuracy; without the simulator, this would have had to be done by hand. 
+
+Our plan was to create a working software package as early as possible for every group to begin using, and we met this goal. 
+A working version of the simulator was provided to the class on 30 October 2014, giving the class more than a month to work with the software to test their solutions.  
+Along with this, we also presented our tutorial.
+
+Additionally, we hope that in the time remaining we can use the simulator gain a deeper understanding of the problem; test different assumptions made in the class, like constant drive times; be able to test solution robustness to changes in requests; and, possibly, even create an iterated solution method that attempts to solve the entire problem.
+
+\section{MATLAB Model}
+
+There are many parts to the model that we have created, as detailed below.
+
+\subsection {MATLAB Object Model}
+
+
+\subsubsection{City Representation}
+Cities are objects that store multiple pieces of information. 
+The city stores all of the data about drive times, stops, customer requests, landfills, staging areas, trucks, etc. 
+It is an entire set of data that makes up the problem statement. 
+
+
+\paragraph{Actions}
+A city contains \emph{actions}, also called \emph{stops}.
+There are multiple actions for any city.
+An action is simply something a driver can do.
+An action has several main parts:
+
+\begin{description}
+\item[The Operation ] \hfill \\
+ This can be P (pickup), D (dropoff), R (replace), S (stage), U (unstage), or E (empty).
+\item[The In-size   ] \hfill \\
+ This is the size of the dumpster that is being brought to the action or stop, as a numerical value between of 0, 6, 9, 12, or 16.
+The 0 represents no dumpster and the others represent the four sizes of containers we are dealing with.
+\item[The Out-size  ] \hfill \\
+ This is the same thing as in-size, but it is what size of dumpster the driver is supposed to leave with.
+\item[The Start-time] \hfill \\
+ This is the time, in seconds, when this action can start being performed; for example, if the start-time is 10,000, this means that 10,000 seconds must elapse during the simulation before this action can be performed.
+\item[The Stop-time ] \hfill \\
+ This is the time, in seconds, when an action must be performed by; together with start-time, these model time window constraints.
+\item[The Wait-time ] \hfill \\
+This is the amount of time it takes to actually complete the action (note that this is different from the travel time it takes to get to the location, which is modeled in a different place).
+\item[The Location  ] \hfill \\
+This is where the action is actually located; it is an index into the array of locations that we have, telling us which location has this particular action.
+It is also an index into the matrix of distances and durations between locations.
+\end{description}
+
+
+\paragraph{Example}
+
+Different locations have different kinds of actions.
+For example, staging areas have 8 actions each, as shown in this table:
+
+\vspace{5mm}
+\begin{tabular}{ | c | c | c | c |}
+STAGING AREA & Operation & In-size & Out-size \\
+\hline ACTION 1 & STAGE & 6 &  0 \\
+ACTION 2 & STAGE & 9 &  0 \\
+ACTION 3 & STAGE & 12 &  0 \\
+ACTION 4 & STAGE & 16 &  0 \\
+ACTION 5 & UNSTAGE & 0 &  6 \\
+ACTION 6 & UNSTAGE & 0 &  9 \\
+ACTION 7 & UNSTAGE & 0 &  12 \\
+ACTION 8 & UNSTAGE & 0 &  16 \\
+\end{tabular}
+
+\vspace{5mm}
+
+
+
+If you want to unstage (pickup) a size 12 dumpster, you must start with an empty truck and leave with a size 12 dumpster.
+Thus, you would use the seventh action, which means your in-size is 0 and your out-size is 12.  
+Having multiple actions is needed because only giving a location is ambiguous when a truck travels between staging areas.
+
+Similarly, landfills have four actions each, one for each kind of dumpster you will be bringing there to empty.  
+Customer requests only have one action each, as they will always have a predetermined in-size and out-size.
+Now that we have covered cities, let us look at solutions.
+
+
+\subsubsection{Solution Representation}
+
+The the solution is represented by a matrix.
+Each row represents a driver's route and each corresponding column entry a driver's row is what that driver will do in order.
+A negative one means that the driver does nothing: he is at the end of his route.
+The following is a solution matrix.
+
+\vspace{5mm}
+
+\[
+\left(
+\begin{array}{  c  c  c  c  c  c  c }
+2 & 4 & 19 & 22 & -1 & -1 & -1  \\
+10 & 17 & 19 & 44 & 11 & 13 & 5 \\
+6 & 19 & -1 & -1 & -1 & -1 & -1  \\
+\end{array} \right)
+\]
+
+\vspace{5mm}
+
+
+Each row is a driver; thus, this city has three drivers.
+Driver one performs action 2, then 4, then 19, then 22, and then he is done for the day.
+Similarly, driver three performs actions 6 and 19, in that order, then finishes his day.  
+Driver two is the busiest, obviously, but his actions are just as easily read.
+
+As you can see, it was necessary to encode what kinds of dumpsters the driver was dropping off, picking up, etc. with the in-size and out-size, so that this matrix would be feasible. 
+This encoding of the solution into a matrix is why there are so many actions associated with staging areas and landfills.
+As an example, imagine that stop 19 is a staging area. 
+Because of how the actions are structured, given any city, we will know exactly what kind of action the driver is performing at that staging area. 
+Actions 18-25 may all be at that same staging area, but they all mean different things.
+
+
+\subsection{Route Simulation}
+\begin{verbatim}
+   function [feasible, times, distances, num_serviced, fees, invs] 
+      = simulate(c, sol, v, checkall)
+\end{verbatim}
+
+\paragraph{Parameters}
+\begin{description}
+\item[c] \hfill \\ The city object
+\item[sol] \hfill \\ The solution matrix
+\item[v] (Optional)\hfill \\   True if errors should be printed
+\item[checkall] (Optional)\hfill \\  True if all constraints should be checked, even when one is violated
+\end{description}
+
+\paragraph{Return Values}
+The simulate function takes in a city and a solution matrix as arguments, and outputs these metrics:
+
+\begin{description}
+\item[Feasible ]\hfill \\  False if the solution encountered an error that makes it a non-viable solution; it returns true otherwise
+\item[Times ] \hfill \\ A vector containing all of the times it took each driver to complete his assigned route, based on the solution matrix given
+\item[Distances ] \hfill \\ A vector containing all of the distances traveled by each driver based on his assigned route
+\item[Number Serviced ] \hfill \\ How many of your customer requests were actually completed
+\item[Fees ] \hfill \\ How much in fees you accrued on this route, based on the costs of landfills
+\item[Inventories]\hfill \\  How many dumpsters remain at each staging area at the end of the day
+\end{description}
+
+Some solutions will contain errors that the simulator will recognize as non-feasible solutions. 
+It will return the variable feasible = false if this is the case. 
+Many things will cause it to return infeasible.
+For example, if a driver visits a landfill followed by another landfill, this makes no sense and it will return infeasible.  
+Or, if a driver visits a staging area to get a size 6 dumpster, but that staging area has none in inventory, this will also return infeasible.
+If you want a detailed list of all the constraints refer to the matlab/src directory, or to the model in the next section.
+
+
+Unless instructed otherwise, the simulator will continue to run to the best of its ability when dealing with a non-viable solution.
+The errors it finds will be displayed in the main window of MATLAB.
+
+Our suite of functions also comes with a generate\_rand\_solution function that takes a city as an argument.
+However, beware, this random solution is rarely viable.
+
+
+
+\subsection{City Generation}
+\begin{verbatim}
+   function [c] = generate_city(R, L, Y, D)
+\end{verbatim}
+
+The function generate\_city(R, L, Y, D) generates a city at random, based on these arguments:
+
+\paragraph{Parameters}
+\begin{description}
+\item[R] The number of customer requests to be generated
+\item[L] The number of landfills to be generated
+\item[Y] The number of staging areas, or yards, to be generated
+\item[D] The number of drivers that work in that city
+\end{description}
+
+\paragraph{Return Value}
+\begin{description}
+\item[c] A randomly generated city
+\end{description}
+
+This function creates a random set of customer requests, landfills, staging areas, trucks, etc. for us to run a simulation on. 
+Everything is random, so that you can create a diverse set cities to run simulations through. 
+
+
+\subsection{City Translation}
+
+\begin{verbatim}
+   function [c] = translate(dirname)
+\end{verbatim}
+
+This function takes the output from the user interface team (who are working with Excel) and translates it into our city structure in MATLAB. 
+It also finds the coordinates of the addresses, to plot the city. 
+
+For example, sample data given by the UI team on Canvas is also in our repository under /matlab/test/example\_ui\_data.
+If you want a city based on this data, you can simply enter the matlab command c = translate('test/example\_ui\_data'); This city will represent the data found in this city.
+Translate expects to see five files in the directory is given: output1.txt, output2.txt, output3.txt, output4.txt, and output5.txt.
+
+
+
+Because this uses a Google API to find a location from the address the UI team gives, you must be connected to the internet to run this.
+
+\section{Model}
+
+(Needs to be integrated with previous section)
+
+
+We will describe the mathematical model that this simulator attempts to simulate.
+
+This includes detailing some of the assumptions that went into this model along with listing the parameters and variables for the model.
+
+Finally, we will list the constraints and objectives.
+
+\subsection{Model Assumptions}
+
+Several assumptions were made to simplify the model.
+For example, our model only takes trucks into account without worrying about drivers.
+We see that drivers could be incorporated into the model be fixing a number of drivers and only letting this many trucks be anywhere but the start location at any given time.
+
+Another assumption that went into our model is that when a costumer requests a certain size dumpster, the only feasible solutions are to give that costumer exactly the dumpster that was requested.
+This is more strict than the problem statement in which a large dumpster can be provided.
+
+We provide arbitrary time windows that are more general than needed, because we only needed to have AM or PM time windows.
+However we chose to include them in the model because Sam's Hauling mentioned that some customers do request pickups or delivers in specific time windows.
+
+Also, drive times and wait times are assumed to be constant throughout the day.
+This may or may not be a reasonable assumption.
+
+We were not sure if we should include actions to be performed at staging areas that allowed drivers to drop-off a container and pickup a container in the same action.
+We decided against this because this greatly increases the number of actions, solutions are required to first drop-off a dumpster and then pickup one up.
+
+
+
+\subsection{Model Decisions}
+
+
+\subsubsection{Cody's Idea}
+
+First, we wanted to test that each operation followed every previous operation, and that every in-size matched every out-size. 
+We conceived this as calculating the the total time and distance for each driver by using a different matrix. 
+After discussions with the group, however, we figured out another way to represent all of the solution information in one single matrix. 
+
+This amounts to representing a route not as indicies into the city, but as a table of all the components of an action put into a table for a given driver.
+This is convenient to check the constraints because it is more simple to know the next operation from the current stop.
+However, this means that solutions duplicate data from the city, and it is possible to give a solution matrix that is inconsistent with the city.
+
+\subsection(City Streets)
+
+Originally, there was also an idea of coding every city street into the city objects, so that there were multiple ways to reach every destination.
+This would simulate a real city's data. 
+After analyzing this method we determined that each driver would simply choose the shortest path if given the option, so we would just have the shortest path connecting every location.
+This ended up simplifying the problem, and allowed the simulator better performance.
+
+
+\subsubsection{Modeling Language}
+\subsubsection{Simulator output}
+
+\subsubsection{Other decisions we spent time on}
+MATLAB supports objects?
+include number of requests in city object?
+how many things should go into one big matrix vs several small ones?
+directed graph.
+not using direct paths, but just giving streets and including which streets as part of solution.
+
+
+
+Something about no over simplifying output for other teams (sum of times vs vector of times).
+With two different objectives we see quite different solutions.
+(MORE COMING HERE.)
+
+\begin{verbatim}
+
+with sum + numdrivers^2 * max
+driver costs: 
+	
+26259 26927 26691 25757 26812 26035 26599 26859 26848 26423 
+times: 
+	26259 26927 26691 25757 26812 26035 26599 26859 26848 26423 
+	sum of all times: 265210
+
+	max time: 26927
+	
+	
+with sum
+driver: 
+	
+    0     0     0 63056     0     0 24699     0 125832 41048 
+times: 
+	    0     0     0 63056     0     0 24699     0 125832 41048 
+	sum of all times: 254635
+
+	max time: 125832
+	
+	
+with sum + overtime
+driver: 
+	
+37924 37949 37922 38046 37941 37925 38064 37968 37942 37916 
+times: 
+	37924 37949 37922 38046 37941 37925 38064 37968 37942 37916 
+	sum of all times: 379597
+
+	max time: 38064
+
+\end{verbatim}
+
+
+
+\fbox{\includegraphics[width=6cm]{images/seed_0_sum.png}}
+\fbox{\includegraphics[width=6cm]{images/seed_0_max.png}}
+
+
+\subsection{Model Variables}
+
+First, we will define the variables used in the model.
+While giving the symbols and their dimensions, we will try to use the following convention for indices.
 For convenience, unless otherwise noted, 
 $i$ will range from $1$ to $n$,
 $j$ will range from $1$ to $m$,
@@ -28,11 +427,8 @@ and $l$ will be another index.
 All times can be measured in seconds.
 
 
-\section {Parameters}
 
-\subsection{Names}
-%TODO: make the {in}, {out}, {begin}, {end}, and {total} be normal font.
-
+\subsubsection{Parameters}
 \begin{tabular}{ l | l | l }
  Variable name                 &                                                                & Description                                                   \\
 \hline
@@ -67,14 +463,14 @@ All times can be measured in seconds.
                                & $                                                           $  &  `S': Stage a dumpster                                        \\
                                & $                                                           $  &  `U': Unstage a dumpster                                      \\
                                & $                                                           $  & \}                                                            \\
-  $T_{max}$                    & $  T_{max}   \ge 0                                          $  & Total time in a day.                                          \\
-                               & $                                                           $  & Solutions that take more time are infeasible.                 \\
+%  $T_{max}$                    & $  T_{max}   \ge 0                                          $  & Total time in a day.                                          \\
+%                               & $                                                           $  & Solutions that take more time are infeasible.                 \\
 % \hline
-                               & $                                                           $  &                                                               \\
+%                               & $                                                           $  &                                                               \\
 \end{tabular}
 
 
-\subsection{The City}
+\subsubsection{The City}
 \begin{tabular}{ l | l | l }
  Variable name                 &                                                                & Description                                                   \\
  \hline
@@ -120,19 +516,15 @@ All times can be measured in seconds.
   $F_l$                        & $  1 \le l \le L                                            $  & The fee associated with landfill $l$                          \\
   $e_l$                        & $1 \le e_l \le m, 1 \le l \le L                             $  & The location of landfill $l$                                  \\ 
 \end{tabular}
-
 \subsection{Other thoughts}
 
 In matlab, the parameters 
   $L$,
+
   $Y$,
   $R$
 will be required to generate a random city in addition to several distribution parameters.
 A `city' will be encapsulated by the rest.
-
-The begin times and end times are more general than needed.
-However, this will allow us to let a given action happen at any time in the day, only mornings, or at specific time windows.
-It was mentioned that the third option may be required for some customers.
 
 There are $R$ different actions to represent the requests, because there is only one action associated to each.
 Then each dumpster size will have its own action for each landfill: one action where the in and out size is each dumpster size.
@@ -140,15 +532,15 @@ Then, for each staging area there will be actions allowing a dumpster to come in
 Also, there will be an action coming in to each staging area with each dumpster size and leaving with no dumpster.
 That is, $n = R + (L + 2 Y) (|S| - 1)$.
 
-\section{Decision variables}
+\subsection{Decision variables}
 
-The solution to the problem will be given by a matrix with $D$ rows and $n$ columns.
+The solution to the problem will be given by a matrix with $D$ rows and an arbitrary number of columns.
 Each row $x_d, 1 \le d \le D$ will be a permutation vector of the stops to be performed by driver $d$ (followed by $-1$'s).
 Let us name their lengths $r_d := length(x_d) \le n$.
 We will interpret the $l$-th element of $x_{d}$ (which is denoted $x_{d,l}$) as the $l$-th stop to be performed by truck $d$.
 For example, if $o_{x_{d,l}} =$ `S', then the $l$-th stop by driver $d$ is a staging operation at a storage yard.
 
-\section{Objectives}
+\subsection{Objectives}
 
 Let us make some of the following equations simpler with these definitions.
 Let $t(x,y) = t_{x,y}$, so we have fewer subscripts.
@@ -162,15 +554,16 @@ We will simulate this as a multi objective problem.
 In revision one, this will only include the number of requests serviced, the time taken to do so, the total distance covered, and the amount of fees accrued.
 We could use a lexicographic ordering to order these (If we have a maximum time).
 
-\subsection{Number of requests serviced}
+\subsubsection{Number of requests serviced}
 
-The total number of requests serviced is either
-$$N = (\sum_{d=1} ^D \sum_{j=1 \atop o_j \in \{\mbox{`D'},\mbox{`P'}\}}^{r_d} 1) + (\sum_{i=1} ^D \sum_{j=1\atop o_j = \mbox{`R'}}^{r_d} 2)$$
-or
-$$N = \sum_{d=1} ^D \sum_{j=1\atop o_j \in \{\mbox{`D'},\mbox{`P'}, \mbox{`R'}\}}^{r_d} 1$$
-depending on whether servicing a replace request counts as twice the number of requests serviced as a pickup or delivery.
+The total number of requests serviced is 
+%either
+%$$N = (\sum_{d=1} ^D \sum_{j=1 \atop o_j \in \{\mbox{`D'},\mbox{`P'}\}}^{r_d} 1) + (\sum_{i=1} ^D \sum_{j=1\atop o_j = \mbox{`R'}}^{r_d} 2)$$
+%or
+$$N = \sum_{d=1} ^D \sum_{j=1\atop o_j \in \{\mbox{`D'},\mbox{`P'}, \mbox{`R'}\}}^{r_d} 1.$$
+%depending on whether servicing a replace request counts as twice the number of requests serviced as a pickup or delivery.
 
-\subsection{Time taken to service requests}
+\subsubsection{Time taken to service requests}
 
 One way to model the total time could be
 $$ T_{total} = \max_{d=1} ^D \{ a(d, r_d) \} $$ which is the time of the longest route and would represent the amount of time before all routes were completed.
@@ -184,11 +577,11 @@ What the simulator will likely do is return an entire vector of time-costs assoc
 If we also include fuel costs (or driving distances) between different locations, then another output will be the total distance driven.
 Finally, if this is specifically fuel costs (and not driving distance) and we include the landfill fees, we could simply add the fees to driving costs and return it as an objective.
 
-\subsection{Distance Covered}
+\subsubsection{Distance Covered}
 This is given by
 $$\sum_{d=1}^D d(I, x_{d, 1}) + \sum_{j=1}^{l-1} d(l_{x_{d,j}},l_{x_{d,j+1}} ).$$
 
-\subsection{Landfill Fees}
+\subsubsection{Landfill Fees}
 This is given by
 
 \[
@@ -200,21 +593,16 @@ This is given by
 \]
 
 
-
-
-\subsection{Variances in output of dumpster sizes at each staging area}
+\subsubsection{Dumpster sizes}
 This is future work, and might be used to ensure that dumpsters are equally (or otherwise) spread out among staging areas at the end of the day.
-This might ensure that dumpsters at staging areas are accessible for the next day.
+This could be used to ensure that dumpsters at staging areas are accessible for the next day.
 Also, it is mentioned in the problem description that some staging areas might not be allowed to have dumpsters overnight.
-Although we would need another parameter in the model to dictage which staging areas these are, that would likely make this objective be a constraint.
+Although we would need another parameter in the model to dictate which staging areas these are, that would likely make this objective be a constraint.
 
-\section {Constraints}
+\subsection {Constraints}
 
-\subsection{Permutations must not overlap}
+\subsubsection{Permutations must not overlap}
 We don't want to visit the same request twice, so for all $1 \le d, d' \le D$ and all $1 \le j, j' \le r_i$, at least one of the following $4$ statements must be true:
-
-%Should have used array or \[ ... \]
-
 
 \begin{tabular}{ l r  c  l }
 1: & $ d=d'$ & and & $j = j'$ \\
@@ -223,13 +611,13 @@ We don't want to visit the same request twice, so for all $1 \le d, d' \le D$ an
 4: & $x_{d,j}$ & $\ne$ & $x_{d', j'}$ \\
 \end{tabular}
 
-\subsection{Time for each stop falls within windows}
+\subsubsection{Time for each stop falls within windows}
 For each $1 \le i \le D$ and each $1 \le k \le r_i$ we need
 $$ T^{begin}_{x_{i,k}} \le a(i, k) \le  T^{end}_{x_{i,k}}.$$
 
 If we include the $T_{max}$ variable, we will need to ensure that $a(d,r_d) \le T_{max}$ for all $1 \le d \le D$
 
-\subsection {Sizes match}
+\subsubsection {Sizes match}
 
 For all $1 \le d \le D$, and for all $1 \le j \le r_d - 1$, we have
 $$S^{out}_{x_{d,j}} = S^{in}_{x_{d,j+1}}.$$
@@ -243,8 +631,8 @@ We also assume that all trucks start out with no dumpsters.
 In the problem description, there is a statement that dumpsters larger than the one being requested can also be used.
 We have not incorporated this into our model yet.
 
-\subsection {Operations follow each other}
-(Yes, this is needed! But wouldn't be if we instead used a dumpster state of full, or empty (which isn't the same as no dumpster) for each stop/action.
+\subsubsection {Operations follow each other}
+(Yes, this is needed! But would not be if we instead used a dumpster state of full, or empty (which is not the same as no dumpster) for each stop/action.
 Then we would just need a `truck state matches' constraint, which would be as simple as the `sizes match' constraint.)
 
 For all $1 \le d \le D$, and for all $1 \le j \le r_i - 1$, we need that $follows(o_{d, j}, o_{d, j+1})$ is true, where the $follows$ predicate has the following truth table:
@@ -262,12 +650,12 @@ For all $1 \le d \le D$, and for all $1 \le j \le r_i - 1$, we need that $follow
 
 Read this as operation in row $d$ can follow the operation in column $j$ if $follows(i,j) = $ T.
 
-\subsection{Constraints on Truck Types}
+\subsubsection{Constraints on Truck Types}
 
 For each $ 1 \le d \le D$ and each $1 \le j \le r_d $
 we need $$ c_{x_{d,j},t_{d}} = 1 .$$
 
-\subsection{Staging Area Capacities Met}
+\subsubsection{Staging Area Capacities Met}
 
 Let $b(d,t) $ ($b$ for bound) be the largest index $k$, $1 \le k \le r_i$ such that $a(d, k) < t$.
 In other words, this is the a index into the $d$-th truck's route that gives its last stop before time $t$ ($t \in R$, $0 \le t < \infty $).
@@ -282,22 +670,22 @@ This assumes that each dumpster takes up the same amount of space in the staging
 If not, we could use a weighted sum, where we replace the $\pm 1$ with a weight based on $s$
 (the coefficients would need to be another parameter to the model).
 
-\subsection{Each truck ends where it starts}
-We may wish to add a constraint that says each truck must stop at the staging area it starts at.
+\subsubsection{Each truck ends where it starts}
+There is a constraint that says each truck must stop at the staging area it starts at.
 That is, for all $1 \le d \le D$, we have $l_{x_{d, r_d}} = I$.
 
-\section{Example}
+\subsection{Example}
 
-\subsection{TODO}
-Add the variable names next to their descriptions.
-Make more complicated examples.
-Add distances, and fees.
+%\subsection{TODO}
+%Add the variable names next to their descriptions.
+%Make more complicated examples.
+%Add distances, and fees.
 
 
 This is an example city with $L = 1$, $Y = 1$, $R = 2$, $D = 2$, $S = \{ \mbox{9  }, \mbox{12   }, \mbox{16   }, \mbox{No Dumpster} \}$,
 $T = \{ \mbox {small}, \mbox{large}  \}$, $n=11$, $m=4$.
 
-\subsection{City}
+\subsubsection{City}
 Possible Stops:
 
 \begin{tabular} {c | c c c c c c c }
@@ -356,16 +744,16 @@ index     &   capacity & location \\
 $I = 6$.
 
 
-\subsection{Solution}
+\subsubsection{Solution}
 
-These following two are possible solutions, although the second doesn't end where it starts.
+These following two are possible solutions, although the second does not end where it starts.
 1. $x_1 = ()$, $x_2 = ()$ (In this case, $r_1 = r_2 = 0$).
 2. $x_1 = ()$, $x_2 = (6, 11, 4, 7)$ (In this case, $r_1 = 0$, $r_2 = 4$).
 
 However, this solution is not feasible, because the sizes don't match in the last stop of the second truck:
 $x_1 = ()$, $x_2 = (6, 11, 4, 8)$ (In this case, $r_1 = 0$,$ r_2 = 4$).
 
-\subsection{Objectives}
+\subsubsection{Objective Values}
 
 The time for the first is $0$, which is also the number of requests serviced.
 The number of requests serviced in the second is $1$, and the time for the second truck $a(2, 4)$ is:
@@ -374,5 +762,242 @@ $$ = d_{2,2} + W_6 + d_{2,4} + W_{11} + d_{4, 2} + W_{4} + d_{2,2} + W_7$$
 $$ = 0 + 2 + 4 + 1 + 1 + 2 + 0 + 2 $$
 $$ = 12. $$
 Thus, $T_{total} = 12$ as well.
+
+
+
+\section{Simulator}
+
+
+\subsection{Performance}
+
+Currently, the two most expensive functions of the simulator are the check that inventory bounds are satisfied and a helper function that computes the times each request is performed.
+Which of these methods is most time consuming depends on how close to valid the solution is.
+
+(Better graphics coming, but the one on the left is when the solution is not close to valid, while the one on the right is when all checks are performed.)
+
+\fbox{\includegraphics[width=5cm]{images/times_for_solutions_not_close_to_valid.png}}
+\fbox{\includegraphics[width=5cm]{images/times_for_solutions_with_full_check.png}}
+
+\subsection{Capabilities}
+
+It was kind of sad that the capabilities section was empty.
+Its not now.
+
+
+\subsection{Failed attempts/Lessons learned}
+
+
+\subsubsection{No way to express waiting}
+
+We initially created the simulator without the ability to have a driver wait without performing any action;
+this caused a problem because drivers were not able to wait for a time window to begin.  
+
+
+\subsubsection{Identifying what needs to be remembered at stop}
+Having locations in a solution was not not enough.
+
+Additionally, we learned that each location must have multiple actions associated with them, 
+as many things can be done at each location - an assumption we had not initially considered.
+
+
+\subsubsection{Matrix dimension}
+Some drivers did not have the same number of actions assigned to them, even if they took the same amount of time or longer than a driver with more actions.
+We learned that less stops did not necessarily mean less productivity or efficiency.
+
+When first creating a solution matrix, our assumption was that the matrix would always be size DxN, where D was the number of drivers in the city and N was the number of actions possible in the city. 
+This turned out to be false because drivers could repeat actions, meaning that the matrix dimensions could not be determined ahead of time.
+
+
+\subsubsection{Distribution of city parameters}
+
+Our simulator tries to replicate real life cities and routes in which a driver or multiple drivers drops off and picks up dumpsters;
+therefore, we have tried to make this as close to life as possible, while keeping it simple enough to use.
+It is our belief then that this corresponds directly to any real world problem that Sam's Hauling might encounter,
+and any variance to the real world outcome is an error in the software but not an error in the design or theory of our project.
+
+
+Originally, the simulator did not generate realistic cities.
+For example, the distribution of wait times did not match example data from Sam's Hauling.
+With sample data, we modified the generate\_city function so that the cities better represented real data.
+
+One way of doing this to randomly select locations from the sample data, and construct cities from this.
+One disadvantage of this is the distances between all stops must be computed.
+An alternative way is to first simply come up with distributions of several important characteristics of the sample data, like the distribution of drive times.
+Then, more drive times can be generated that follow the same mean, variance, or possibly skew of these distributions.
+
+
+
+%There are some things currently not output by the UI team that are output by the generate_city function. 
+%An example is the location of each landfill or staging area. 
+%This may affect the simulator. 
+
+
+\subsection{Simulator Correctness}
+
+
+%We claim it is robust.
+%For me, software robustness can only be claimed when there is a large set of well written tests for it.
+%If we want to convince the reader that our simulator works, we should finish writing those tests :)
+We will put comments about our testing here.
+
+
+
+\section{Robustness}
+
+There are more subtle ways that the simulator may be able to capture a solution's quality.
+Several of these measures revolve around the idea of robustness.
+
+
+\subsection{Changing Request Locations}
+
+
+\subsubsection{Goal}
+
+Because costumers are continually calling in and changing their requests through out the day, we are interested in figuring out if some solutions handle changes better than others.
+In order to answer this, we first created a way to compare how robust two solutions are with respect to changes in requests.
+Then we created several random cities and used this comparison see if there were drastic differences in robustness between two good solutions for the generated city.
+If there are big differences in the robustness of several good solutions, then we will conclude that a good algorithm must not only have an efficient solution, but that solution must also be robust.
+
+\subsubsection{The Process}
+
+
+For our considerations, we defined the difference in robustness of two solutions $s_1$ and $s_2$ according to the following process.
+
+\begin{enumerate}
+\item \hfill \\ Pick a random time $t$ between $0$ and the minimum time it takes either solution to finish.
+\item \hfill \\  Create a new city from the original city by removing all the requests that have already been serviced by $s_1$ before time $t$.
+Also, update the starting locations for each of these drivers, so that each driver starts where it would have been if it were at time $t$ in $s_1$ for original city.
+Create the corresponding sub-city for $s_2$ at time $t$.
+\item \hfill \\  Randomly change the location of $\frac 1 4$ (an arbitrary percentage) of the remaining requests for each of these two sub cities (with a uniform distribution).
+\item \hfill \\  Find optimal solutions for the sub-cities, and compare the times for these optimal solutions.
+\end{enumerate}
+
+In the previous process, step 2 is called creating a sub-city problem from the original problem.
+Of course, this process requires that a city has multiple start locations that don't have to be at a staging area, and may include a full dumpster.
+It is worth noting that the remaining requests will likely be different for these two cities (unless $s_1 = s_2$), so different requests are changed in each sub-city.
+One could simply select a subset of requests from the original city to be changed, and then not change one already serviced.
+This gives preference to solutions that finish faster.
+
+\subsubsection{Visual Robustness}
+We can see how this process works with some pictures.
+We can take a random city with $70$ requests, and $5$ depots.
+This original city is as shown, where the numbers represent dumpster sizes.
+($0\Rightarrow 6$ implies there is a pickup of a size $6$ dumpster.)
+A $start\_X$ is the start location for driver $X$ and $stop\_X$ is his end location.
+Please read the ``This is not done section" if you have questions about the cities :)
+
+\fbox{\includegraphics[width=10cm]{images/0_original.png}}
+
+Two alternate solutions are given here.
+They are both local minima with respect to a very primitive local neighbor search.
+(Which is going to be improved.)
+
+\fbox{\includegraphics[width=6cm]{images/0_alternate_1.png}}
+\fbox{\includegraphics[width=6cm]{images/0_alternate_2.png}}
+
+After cutting the first solution at time $52221$, we applied mutations to the first sub-city to get the city on the right from the original sub-city on the left.
+
+\fbox{\includegraphics[width=6cm]{images/0_reduced_city_1.png}}
+\fbox{\includegraphics[width=6cm]{images/0_mutated_city_1.png}}
+
+Finally, we have the solutions to the mutated sub-cities.
+
+\fbox{\includegraphics[width=6cm]{images/0_mutated_solution_1.png}}
+\fbox{\includegraphics[width=6cm]{images/0_mutated_solution_2.png}}
+
+\subsubsection{Results and Interpretation}
+The previous images depict one trial.
+For this first trial, the sum of times of all drivers for $s_1$ was $242490$, while the sum for $s_2$ was $240488$.
+The minimum of $s_1$ and $s_2$'s maximum driver's drive time was $96188$, and we selected time $52221$ to cut the city into its sub-city.
+When we solved the problem for the two sub-cities, we found that the sum of all drive times for the first city was $73677$, while the sum for the second sub-city was $87145$.
+
+This process was continued 4 more times to produce the following output, where the previous numbers are shown.
+Each bracketed column represents another trial.
+\begin{verbatim}
+total:
+[242490:240488] [236186:243216] [270128:268134] [239330:224200] [232833:234310] 
+cut time:
+[ 52221: 96188] [ 43933: 78308] [ 72937: 90835] [ 38051: 58019] [ 34193: 61245] 
+reduced:
+[ 73677: 87145] [ 53775: 91516] [ 19789: 26255] [ 76986: 57646] [ 58588: 58175] 
+diff:
+[  2002:-13468] [  7030: 37741] [  1994: -6466] [ 15130: 19340] [  1477:  -413] 
+\end{verbatim}
+
+\paragraph{Interpretation}
+The additional last line is the most important.
+It means that although the better ($\min$) of the two alternatives was $2002$ seconds faster than the alternative, the solution to its sub-city problem with $t=52221$ was $13468$ \emph{slower} than the solution to the sub-city problem for the slower solution.
+
+Out of the $5$ trials that were run, $3$ of the solutions that had faster times for the original city admitted slower times for the sub-city problem.
+Of course, in each particular case, this could be because the mutations for the sub-cities forced their solutions to have slower times.
+However, with a high number of trials, the differences in mutation should be averaged out.
+
+\paragraph{Drawing Conclusions from Results}
+One proposed statistical test could be to see if the variance in sub-city solutions from the above process is different from the variance when the two alternate solutions are the same.
+This would mean that the variance in sub-city solutions for different solutions is different from the variance in sub-city drive time caused by the mutation of the sub-city.
+
+Another test that may be more natural is to not generate a new city each test.
+Rather apply several different mutations and come up with several different times for each initial pair of alternative solutions.
+Perhaps, enough tests could be done in order to determine if the mean difference in sub-city solutions is $0$.
+Then, this inner test would be conducted several times, and we could get a sense of how often solutions have differing robustness.
+For example, a solution's robustness may be important if $80$ out of $100$ pairs of solutions had statistically significant differences in the means of their sub-city solutions.
+
+Both of these experiments have non-parametric tests that should be able to determine if robustness as we have defined it varies from solution to solution.
+For the first test, we may use Levene's test or the Kolmogorov-Smirnov test, while a Mann-Whitney test could be useful for the second.
+
+\subsubsection{This isn't done yet}
+There are several caveats of this process in its current state.
+(This is why we haven't ran the statistical test :)
+
+We used the sum of all times, instead of the maximum time, because that is was what our primitive solver optimized.
+This problem is already fixed, although the images in this presentation do not reflect this.
+The new solver has an objective of num drivers squared times maximum time + sum of all times.
+This seems to produces better output than using an overtime penalty based on the sum of times past the minimum driver's time.
+
+Right now, there is a problem that if the driver is waiting at a landfill, with say 20 minutes left after the cutting time, he no longer has to wait that 20 mins in the sub-city.
+We are not sure if this is worth fixing.
+
+Also, right now a there is a bug with multiple start locations, where if a driver does not service any requests, he does not have to end at the end location.
+This is an artifact of trying to define multiple start locations, and will be fixed soon.
+
+Also, currently the driving end states are not required to have no dumpster.
+(These images are not from the matlab simulator.).
+This is already fixed, although the images in this presentation do not reflect this.
+
+Of course, we are comparing random good solutions, without trying to find robust solutions.
+The differences might be bigger if we could actually search for robust solutions.
+This means we might should take the maximum of differences in robustness, rather than average when determining the usefulness of this concept.
+
+
+\subsection{Changing Times}
+One of the assumptions made in the class was that drive times do not depend on the time of day.
+We are currently collecting drive times through different times of days, and hope to test if this assumption is valid or if simulation output changes drastically when we include dynamic drive times.
+One simple test would be constructed in the same way as changing the request locations, only rather than simulating a solution part way through, we just see whether some solutions work better with realistic, changing drive times.
+Of course, it could simply turn out that all solutions are simply scaled to take longer based on the variance in times through out the day, without some be scaled more than others.
+
+\subsection{Flexible Dumpster Sizes}
+One fairly simple modification to the simulator could allow flexible dumpster sizes.
+We could expand our model to include multiple actions per request.
+The different actions would have different sizes, so that solutions are allowed to deliver a size $9$ dumpster when the request was for a size $6$ dumpster.
+Then the constraint on requests not being serviced multiple times would have to be fixed. (insert latex ref here.)
+If this means that solutions are much faster, and this is allowed by Sam's Hauling, then it would be a good idea to include this in the algorithm.
+We may add penalties to this based on the extra cost of dumping larger dumpsters.
+How important this is to solution times obviously depends on what the distribution of dumpster size requests are in the first place.
+
+\section{Conclusion}
+
+(NOT WRITTEN UNTIL THE REST OF THE DOCUMENT IS FINALIZED)
+
+We created a simulator.
+The simulator is good.
+We presented it to the class early.
+We iteratively fixed shortcoming when the arose.
+We created a model to describe what the simulator does.
+We tried to define robust solutions.
+We learned how to collaborate as a team, and with other teams to produce the best results.
+We learned how complicated real world problems are.
+
+
+Could move rest of tutorial (how-to) into an appendix
 
 \end{document}
