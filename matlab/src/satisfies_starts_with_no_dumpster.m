@@ -23,11 +23,14 @@ for d = 1:c.number_of_drivers
                 '   The first operation cannot have a dumpster, so it can only be a P or U.\n\n'], d, s); 
         end
     end
-%    if c.actions(sol(d,1)).insize ~= 0
-%        is_valid = false;
-%        warning(['Driver %d''s first operation is %s.\n'...
-%            '   The first operation cannot have a dumpster, so it can only be a P or U.\n\n'], d, s); 
-%    end
+    s = c.actions(sol(d,sum(sol(d,:)>0))).operation;
+    if s ~= 'S' && s ~= 'D'
+        is_valid = false;
+        if v
+            warning(['Driver %d''s last operation is %s.\n'...
+                '   The last operation cannot have a dumpster, so it can only be a S or D.\n\n'], d, s); 
+        end
+    end
 end
 
 end

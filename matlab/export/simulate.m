@@ -26,7 +26,7 @@ if ~feasible
 end
 
 sol = cast(sol, 'int32');
-all_times = get_all_times(c, sol);
+all_times = get_all_times(c, sol, ones(size(sol)));
 
 feasible = satisfies_operation_orders(c, sol, v) && feasible;
 if ~feasible && ~checkall
