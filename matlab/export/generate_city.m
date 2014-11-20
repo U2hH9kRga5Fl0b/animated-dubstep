@@ -195,9 +195,9 @@ for i=1:R
         c.actions(next_action_index).stop_time   = cast(total_time / 2, 'uint32');
     elseif ( r < .8)
         c.actions(next_action_index).start_time  = cast(total_time / 2, 'uint32');
-        c.actions(next_action_index).stop_time   = cast(0, 'uint32');
+        c.actions(next_action_index).stop_time   = cast(total_time, 'uint32');
     else
-        window = 50;
+        window = 5000;
         st_tm = cast(rand() * (total_time - window), 'uint32');
         c.actions(next_action_index).start_time  = st_tm;
         c.actions(next_action_index).stop_time   = cast(st_tm + window, 'uint32');
