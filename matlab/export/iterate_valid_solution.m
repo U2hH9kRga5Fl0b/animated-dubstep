@@ -28,8 +28,6 @@ function [ best ] = iterate_valid_solution( c, n )
 %request because of the truck types, we just terminate
 
 
-best = -ones(c.number_of_drivers, 1);
-
 for k = 1:c.number_of_requests
     found_impossible_request = true;
     if ( c.actions( 8 * c.number_of_staging_areas + 4 * c.number_of_landfills + k ).allowable_truck_types(1) == 1 )
@@ -141,8 +139,8 @@ while ( number_found <= n )
                         for p = 1:c.number_of_drivers
                             sol(p, pos + 1) = -1;
                         end
-                        pos = pos + 1;
                     end
+                    pos = pos + 1;
                     sol(driver, pos) = requests(a);
                 end
             end
@@ -183,8 +181,8 @@ while ( number_found <= n )
                     for p = 1:c.number_of_drivers
                         sol(p, pos + 1) = -1;
                     end
-                    pos = pos + 1;
                 end
+                pos = pos + 1;
                 sol(driver, pos) = requests(a);
                 %The simplest case, of course, is when a driver has the
                 %right size container on his truck, and we just send him to
@@ -210,8 +208,8 @@ while ( number_found <= n )
                             for p = 1:c.number_of_drivers
                                 sol(p, pos + 1) = -1;
                             end
-                            pos = pos + 1;
                         end
+                        pos = pos + 1;
                         
                         %Unstage a new dumpster
                         sol(driver, pos) = randi([1, c.number_of_actions]);
@@ -223,8 +221,8 @@ while ( number_found <= n )
                             for p = 1:c.number_of_drivers
                                 sol(p, pos + 1) = -1;
                             end
-                            pos = pos + 1;
                         end
+                        pos = pos + 1;
                     else %The driver is empty
                         %Unstage a new dumpster
                         sol(driver, pos) = randi([1, c.number_of_actions]);
@@ -236,8 +234,8 @@ while ( number_found <= n )
                             for p = 1:c.number_of_drivers
                                 sol(p, pos + 1) = -1;
                             end
-                            pos = pos + 1;
                         end
+                        pos = pos + 1;
                     end
                 end
                 sol(driver, pos) = requests(a);
@@ -261,9 +259,8 @@ while ( number_found <= n )
                     for p = 1:c.number_of_drivers
                         sol(p, pos + 1) = -1;
                     end
-                    pos = pos + 1;
                 end
-                
+                pos = pos + 1;
                 sol(driver, pos) = requests(a);
                 %The simplest case, of course, is when a driver has the
                 %right size container on his truck, and we just send him to
@@ -289,8 +286,8 @@ while ( number_found <= n )
                             for p = 1:c.number_of_drivers
                                 sol(p, pos + 1) = -1;
                             end
-                            pos = pos + 1;
                         end
+                        pos = pos + 1;
                         
                         %Unstage a new dumpster
                         sol(driver, pos) = randi([1, c.number_of_actions]);
@@ -302,8 +299,8 @@ while ( number_found <= n )
                             for p = 1:c.number_of_drivers
                                 sol(p, pos + 1) = -1;
                             end
-                            pos = pos + 1;
                         end
+                        pos = pos + 1;
                     else %The driver is empty
                         %Unstage a new dumpster
                         sol(driver, pos) = randi([1, c.number_of_actions]);
@@ -315,8 +312,8 @@ while ( number_found <= n )
                             for p = 1:c.number_of_drivers
                                 sol(p, pos + 1) = -1;
                             end
-                            pos = pos + 1;
                         end
+                        pos = pos + 1;
                     end
                 end
                 sol(driver, pos) = requests(a);
@@ -344,8 +341,46 @@ while ( number_found <= n )
             
             
         end % End of replace type
+    
+        %Now, if this is the driver's last action, we must make sure that they
+        %drop off this dumpster to a staging area
+    
+        if ( a == c.number_of_requests )
+            for m = 1:c.number_of_drivers
+                %find the last action for each driver
+                temp = 1;
+                while ( sol(m, temp) ~= -1 && temp ~= size(sol, 2)) 
+                    temp = temp + 1;
+                end
+                
+                if ( sol(m, temp) ~= -1 && c.actions(sol(m, temp)).operation == 'E' )
+                    %Send the driver to unstage
+                       if ( size(sol, 2) == temp )
+                            for p = 1:c.number_of_drivers
+                                sol(p, temp + 1) = -1;
+                            end
+                            temp = temp + 1;
+                       end
+                     %Stage the dumpster
+                     sol(m, temp) = randi([1, c.number_of_actions]);
+                     while ( c.actions(sol(m, temp)).operation ~= 'S' || c.actions(sol(m, temp)).in_size ~= c.actions(sol(m, temp - 1)).out_size )
+                            sol(m, temp) = randi([1, c.number_of_actions]);
+                     end
+                end
+            end
+        end
+        
+        
+        
+        
         
     end
+    
+    
+    
+    
+    
+    
     
     %COMPARISON STAGE
     
@@ -368,11 +403,9 @@ while ( number_found <= n )
         [feasible_b, times_b, distances_b, num_serviced_b, fees_b, invs_b] = simulate(c, best, false);
         
         %COMPARE THE SOLUTIONS
-        if ( times <= times_b )
-            if (distances <= distances_b )
-                if ( fees <= fees_b )
+        if ( sum(times) <= sum(times_b) )
+            if ( sol ~= -ones(size(sol,1),size(sol,2)) )
                     best = sol;   %These HAVE to be compared nested like this, or else MATLAB doesn't like it because they are all different dimensions
-                end
             end
         end
     end
