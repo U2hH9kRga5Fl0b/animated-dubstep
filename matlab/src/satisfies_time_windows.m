@@ -32,7 +32,7 @@ for d=1:c.number_of_drivers
             end
         end
        
-        if time_serviced > a.stop_time
+        if time_serviced >= a.stop_time
             is_valid = false;
             if v
                 warning(['Stop made after end of time window.' ...
